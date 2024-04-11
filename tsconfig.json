@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "target": "ES2019",
+    "module": "ES2020",
+    "moduleResolution": "Node",
+    "lib": ["ES2021", "webworker", "dom"],
+    "allowJs": true,
+    "declaration": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "inlineSources": true
+  },
+  "include": ["./src"],
+  "typedocOptions": {
+    "entryPoints": ["src/typedoc.ts"],
+    "readme": "DOCUMENTATION.md",
+    "out": "docs",
+    "excludeInternal": true,
+    "hideGenerator": true,
+    "navigation": {
+      "includeCategories": true,
+      "includeGroups": true
+    },
+    "categorizeByGroup": true,
+    "visibilityFilters": {}
+  }
+}
