@@ -1,11 +1,16 @@
 {
-  "name": "s3-uploads",
-  "description": "",
+  "name": "@oneblink/uploads",
+  "description": "SDK for uploading various types of files to the OneBlink ecosystem",
   "version": "1.0.0",
-  "author": "OneBlink Developers",
+  "author": "OneBlink <developers@oneblink.io> (https://oneblink.io)",
+  "bugs": {
+    "url": "https://github.com/oneblink/uploads/issues"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.554.0",
+    "@aws-sdk/lib-storage": "^3.554.0"
+  },
   "devDependencies": {
-    "@aws-sdk/client-s3": "^3.550.0",
-    "@aws-sdk/lib-storage": "^3.550.0",
     "@microsoft/eslint-plugin-sdl": "^0.2.2",
     "@oneblink/types": "github:oneblink/types",
     "@types/jest": "^29.5.12",
@@ -21,8 +26,27 @@
     "typedoc": "^0.25.13",
     "typescript": "^5.4.4"
   },
+  "directories": {
+    "doc": "docs"
+  },
+  "engines": {
+    "node": ">=20",
+    "npm": ">=10"
+  },
+  "files": [
+    "dist"
+  ],
+  "homepage": "https://github.com/oneblink/uploads",
   "license": "ISC",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oneblink/uploads.git"
+  },
   "scripts": {
     "build": "tsc",
     "docs": "typedoc",
