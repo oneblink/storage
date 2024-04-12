@@ -39,7 +39,7 @@ class OBRequestHandler<T> extends FetchHttpHandler {
       request.headers['x-oneblink-authorization'] = 'Bearer ' + token
     }
     if (this.requestBodyHeader) {
-      request.headers['x-oneblink-request-body-header'] = JSON.stringify(
+      request.headers['x-oneblink-request-body'] = JSON.stringify(
         this.requestBodyHeader,
       )
     }
