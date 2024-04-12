@@ -80,87 +80,80 @@ async function uploadToS3<T>({
   onProgress,
   abortSignal,
 }: OneBlinkUploaderProps & UploadToS3Props) {
-  try {
-    const requestHandler = new OBRequestHandler<T>({
-      getIdToken,
-      requestBodyHeader,
-    })
+  const requestHandler = new OBRequestHandler<T>({
+    getIdToken,
+    requestBodyHeader,
+  })
 
-    const s3Client = new S3Client({
-      // The suffix on the end is important as it will allow us to route
-      // traffic to S3 via lambda at edge instead of going to our API
-      endpoint: `${apiOrigin}${endpointSuffix}`,
-      region: region,
-      requestHandler,
-      // Have to put something here otherwise the SDK throws errors.
-      // Might be able to remove the validation from the middleware somehow?
-      credentials: {
-        accessKeyId: 'AWS_ACCESS_KEY_ID',
-        secretAccessKey: 'AWS_SECRET_ACCESS_KEY',
-      },
-      maxAttempts: RETRY_ATTEMPTS,
-    })
+  const s3Client = new S3Client({
+    // The suffix on the end is important as it will allow us to route
+    // traffic to S3 via lambda at edge instead of going to our API
+    endpoint: `${apiOrigin}${endpointSuffix}`,
+    region: region,
+    requestHandler,
+    // Have to put something here otherwise the SDK throws errors.
+    // Might be able to remove the validation from the middleware somehow?
+    credentials: {
+      accessKeyId: 'AWS_ACCESS_KEY_ID',
+      secretAccessKey: 'AWS_SECRET_ACCESS_KEY',
+    },
+    maxAttempts: RETRY_ATTEMPTS,
+  })
 
-    const managedUpload = new Upload({
-      client: s3Client,
-      partSize: 5 * 1024 * 1024,
-      queueSize: determineQueueSize(),
-      tags: !tags
-        ? undefined
-        : Object.entries(tags).reduce<Tag[]>((memo, [Key, Value]) => {
-            if (!!Key && !!Value) {
-              memo.push({ Key, Value })
-            }
-            return memo
-          }, []),
-      //Related github issue: https://github.com/aws/aws-sdk-js-v3/issues/2311
-      //This is a variable that is set to false by default, setting it to true
-      //means that it will force the upload to fail when one part fails on
-      //an upload. The S3 client has built in retry logic to retry uploads by default
-      leavePartsOnError: true,
-      params: {
-        // Bucket needs to have something to avoid client side errors
-        // Also needs to have a `.` in it to prevent SDK from using the
-        // new S3 bucket domain concept with includes the bucket in the
-        // domain instead of the path. We need it in the path to use the
-        // API as the domain.
-        Bucket: 'storage.test.oneblink.io',
-        Key: key,
-        Body: body,
-        ContentType: 'application/json',
-        ServerSideEncryption: 'AES256',
-        Expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)), // Max 1 year
-        CacheControl: 'max-age=31536000', // Max 1 year(365 days),
-        ACL: 'private',
-      },
-    })
+  const managedUpload = new Upload({
+    client: s3Client,
+    partSize: 5 * 1024 * 1024,
+    queueSize: determineQueueSize(),
+    tags: !tags
+      ? undefined
+      : Object.entries(tags).reduce<Tag[]>((memo, [Key, Value]) => {
+          if (!!Key && !!Value) {
+            memo.push({ Key, Value })
+          }
+          return memo
+        }, []),
+    //Related github issue: https://github.com/aws/aws-sdk-js-v3/issues/2311
+    //This is a variable that is set to false by default, setting it to true
+    //means that it will force the upload to fail when one part fails on
+    //an upload. The S3 client has built in retry logic to retry uploads by default
+    leavePartsOnError: true,
+    params: {
+      // Bucket needs to have something to avoid client side errors
+      // Also needs to have a `.` in it to prevent SDK from using the
+      // new S3 bucket domain concept with includes the bucket in the
+      // domain instead of the path. We need it in the path to use the
+      // API as the domain.
+      Bucket: 'storage.test.oneblink.io',
+      Key: key,
+      Body: body,
+      ContentType: 'application/json',
+      ServerSideEncryption: 'AES256',
+      Expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)), // Max 1 year
+      CacheControl: 'max-age=31536000', // Max 1 year(365 days),
+      ACL: 'private',
+    },
+  })
 
-    managedUpload.on('httpUploadProgress', (progress) => {
-      console.log('Progress', progress)
-      if (onProgress && progress.total) {
-        const percent = ((progress.loaded || 0) / progress.total) * 100
-        onProgress({ progress: Math.floor(percent), total: 100 })
-      }
-    })
-
-    abortSignal?.addEventListener('abort', () => {
-      managedUpload.abort()
-    })
-
-    await managedUpload.done()
-
-    if (!requestHandler.response) {
-      throw new Error(
-        'No response from server. Something went wrong in the OneBlink/uploads SDK.',
-      )
+  managedUpload.on('httpUploadProgress', (progress) => {
+    console.log('Progress', progress)
+    if (onProgress && progress.total) {
+      const percent = ((progress.loaded || 0) / progress.total) * 100
+      onProgress({ progress: Math.floor(percent), total: 100 })
     }
-    return requestHandler.response
-  } catch (err) {
-    if (abortSignal?.aborted) {
-      return
-    }
-    throw err
+  })
+
+  abortSignal?.addEventListener('abort', () => {
+    managedUpload.abort()
+  })
+
+  await managedUpload.done()
+
+  if (!requestHandler.response) {
+    throw new Error(
+      'No response from server. Something went wrong in the OneBlink/uploads SDK.',
+    )
   }
+  return requestHandler.response
 }
 
 export default uploadToS3
