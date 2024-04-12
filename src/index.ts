@@ -1,6 +1,6 @@
 import uploadToS3, { UploadToS3Props } from './uploadToS3'
 import { OneBlinkUploaderProps, ProgressListener } from './types'
-import { SubmissionTypes } from '@oneblink/types'
+import { SubmissionEventTypes, SubmissionTypes } from '@oneblink/types'
 
 class OneBlinkUploader {
   apiOrigin: OneBlinkUploaderProps['apiOrigin']
@@ -20,10 +20,26 @@ class OneBlinkUploader {
   }: {
     body: SubmissionTypes.NewS3SubmissionData
     formId: number
-  } & Pick<UploadToS3Props, 'onProgress' | 'abortSignal' | 'tags'>) {
+    tags: SubmissionEventTypes.S3SubmissionTags
+    requestBodyHeader: {
+      formsAppId?: number
+      externalId?: string
+      previousFormSubmissionId?: string
+      jobId?: string
+      taskId?: string
+      taskActionId?: string
+      taskGroupInstanceId?: string
+      recaptchas: {
+        token: string
+      }[]
+    }
+  } & Pick<UploadToS3Props, 'onProgress' | 'abortSignal'>) {
     console.log('Uploading submission...')
 
-    return uploadToS3({
+    return uploadToS3<{
+      uploadedAt: string
+      submissionId: string
+    }>({
       ...this,
       body: JSON.stringify(body),
       key: `forms/${formId}/submission`,

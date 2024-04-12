@@ -3,36 +3,45 @@ import { Upload } from '@aws-sdk/lib-storage'
 import { HttpHandlerOptions } from '@smithy/types'
 import { HttpRequest } from '@smithy/protocol-http'
 import { FetchHttpHandler } from '@smithy/fetch-http-handler'
-import { SubmissionEventTypes } from '@oneblink/types'
 import { OneBlinkUploaderProps, ProgressListener } from './types'
+import { AWSTypes } from '@oneblink/types'
 
 const RETRY_ATTEMPTS = 3
 
+export type BaseResponse = {
+  s3: AWSTypes.S3Configuration
+}
+type RequestBodyHeader = Record<string, unknown>
 // Our own custom request handler to allow setting customer headers for
 // authentication. Also allow the response header which includes dynamic
 // data from the lambda at edge to be retrieved and held for later when
 // the upload has completed.
-class OBRequestHandler extends FetchHttpHandler {
-  constructor(getIdToken: OneBlinkUploaderProps['getIdToken']) {
+class OBRequestHandler<T> extends FetchHttpHandler {
+  constructor({
+    getIdToken,
+    requestBodyHeader,
+  }: {
+    getIdToken: OneBlinkUploaderProps['getIdToken']
+    requestBodyHeader?: RequestBodyHeader
+  }) {
     super()
     this.getIdToken = getIdToken
+    this.requestBodyHeader = requestBodyHeader
   }
 
   getIdToken: OneBlinkUploaderProps['getIdToken']
-  response?: {
-    uploadedAt: string
-    submissionId: string
-    s3: {
-      region: string
-      bucket: string
-      key: string
-    }
-  }
+  requestBodyHeader?: RequestBodyHeader
+  response?: T & BaseResponse
 
   async handle(request: HttpRequest, options?: HttpHandlerOptions) {
     const token = await this.getIdToken()
     if (token) {
-      request.headers['x-ob-authorization'] = 'Bearer ' + token
+      request.headers['x-oneblink-authorization'] = 'Bearer ' + token
+    }
+    if (this.requestBodyHeader) {
+      request.headers['x-oneblink-request-body-header'] = JSON.stringify(
+        this.requestBodyHeader,
+      )
     }
     if (this.response) {
       request.query['key'] = this.response.s3.key
@@ -54,23 +63,28 @@ const endpointSuffix = '/storage'
 export interface UploadToS3Props {
   key: string
   body: PutObjectCommandInput['Body']
-  tags: SubmissionEventTypes.S3SubmissionTags
+  requestBodyHeader?: RequestBodyHeader
+  tags: Record<string, string | undefined>
   onProgress?: ProgressListener
   abortSignal?: AbortSignal
 }
 
-async function uploadToS3({
+async function uploadToS3<T>({
   region,
   apiOrigin,
   key,
   body,
+  requestBodyHeader,
   tags,
   getIdToken,
   onProgress,
   abortSignal,
 }: OneBlinkUploaderProps & UploadToS3Props) {
   try {
-    const requestHandler = new OBRequestHandler(getIdToken)
+    const requestHandler = new OBRequestHandler<T>({
+      getIdToken,
+      requestBodyHeader,
+    })
 
     const s3Client = new S3Client({
       // The suffix on the end is important as it will allow us to route
@@ -133,7 +147,12 @@ async function uploadToS3({
 
     await managedUpload.done()
 
-    console.log('Response', requestHandler.response)
+    if (!requestHandler.response) {
+      throw new Error(
+        'No response from server. Something went wrong in the OneBlink/uploads SDK.',
+      )
+    }
+    return requestHandler.response
   } catch (err) {
     if (abortSignal?.aborted) {
       return
