@@ -64,7 +64,7 @@ export interface UploadToS3Props {
   key: string
   body: PutObjectCommandInput['Body']
   requestBodyHeader?: RequestBodyHeader
-  tags: Record<string, string | undefined>
+  tags?: Record<string, string>
   onProgress?: ProgressListener
   abortSignal?: AbortSignal
 }
@@ -105,12 +105,14 @@ async function uploadToS3<T>({
       client: s3Client,
       partSize: 5 * 1024 * 1024,
       queueSize: determineQueueSize(),
-      tags: Object.entries(tags).reduce<Tag[]>((memo, [Key, Value]) => {
-        if (!!Key && !!Value) {
-          memo.push({ Key, Value })
-        }
-        return memo
-      }, []),
+      tags: !tags
+        ? undefined
+        : Object.entries(tags).reduce<Tag[]>((memo, [Key, Value]) => {
+            if (!!Key && !!Value) {
+              memo.push({ Key, Value })
+            }
+            return memo
+          }, []),
       //Related github issue: https://github.com/aws/aws-sdk-js-v3/issues/2311
       //This is a variable that is set to false by default, setting it to true
       //means that it will force the upload to fail when one part fails on
