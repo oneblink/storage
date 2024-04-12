@@ -37,8 +37,10 @@ class OneBlinkUploader {
     console.log('Uploading submission...')
 
     return uploadToS3<{
-      uploadedAt: string
+      submissionTimestamp: string
       submissionId: string
+      pdfAccessToken?: string
+      preventPayment: boolean
     }>({
       ...this,
       body: JSON.stringify(body),
