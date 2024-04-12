@@ -3,14 +3,10 @@ import { Upload } from '@aws-sdk/lib-storage'
 import { HttpHandlerOptions } from '@smithy/types'
 import { HttpRequest } from '@smithy/protocol-http'
 import { FetchHttpHandler } from '@smithy/fetch-http-handler'
-import { OneBlinkUploaderProps, ProgressListener } from './types'
-import { AWSTypes } from '@oneblink/types'
+import { OneBlinkUploaderProps, ProgressListener, BaseResponse } from './types'
 
 const RETRY_ATTEMPTS = 3
 
-export type BaseResponse = {
-  s3: AWSTypes.S3Configuration
-}
 type RequestBodyHeader = Record<string, unknown>
 // Our own custom request handler to allow setting customer headers for
 // authentication. Also allow the response header which includes dynamic
@@ -60,12 +56,22 @@ class OBRequestHandler<T> extends FetchHttpHandler {
 
 const endpointSuffix = '/storage'
 
+/** The properties to be passed to the uploadToS3 function */
 export interface UploadToS3Props {
+  /** The key of the file that is being uploaded. */
   key: string
+  /**
+   * The body of the request. This can be a string, a Buffer, a Blob, a
+   * ReadableStream, or a Readable.
+   */
   body: PutObjectCommandInput['Body']
+  /** Optional header to be included in the request to the OneBlink API */
   requestBodyHeader?: RequestBodyHeader
+  /** An optional set of tags that will be applied to the uploaded file */
   tags?: Record<string, string>
+  /** An optional progress listener for tracking the progress of the upload */
   onProgress?: ProgressListener
+  /** An optional AbortSignal that can be used to abort the upload */
   abortSignal?: AbortSignal
 }
 
