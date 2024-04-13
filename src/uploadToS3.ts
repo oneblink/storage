@@ -1,5 +1,5 @@
 import { PutObjectCommandInput, S3Client, Tag } from '@aws-sdk/client-s3'
-import { Upload } from '@aws-sdk/lib-storage'
+import { Upload, Progress } from '@aws-sdk/lib-storage'
 import { HttpHandlerOptions } from '@smithy/types'
 import { HttpRequest } from '@smithy/protocol-http'
 import { FetchHttpHandler } from '@smithy/fetch-http-handler'
@@ -143,8 +143,11 @@ async function uploadToS3<T>({
   managedUpload.on('httpUploadProgress', (progress) => {
     console.log('Progress', progress)
     if (onProgress && progress.total) {
-      const percent = ((progress.loaded || 0) / progress.total) * 100
-      onProgress({ progress: Math.floor(percent), total: 100 })
+      const percent = determineUploadProgressAsPercentage({
+        ...progress,
+        total: progress.total,
+      })
+      onProgress({ progress: percent, total: 100 })
     }
   })
 
@@ -164,7 +167,7 @@ async function uploadToS3<T>({
 
 export default uploadToS3
 
-const determineQueueSize = () => {
+export const determineQueueSize = () => {
   let queueSize = 1 // default to 1 as the lowest common denominator
   // Return as though using highest speed for Node environments
   if (!window) return 10
@@ -191,4 +194,11 @@ const determineQueueSize = () => {
   }
 
   return queueSize
+}
+
+export const determineUploadProgressAsPercentage = (
+  progress: Required<Pick<Progress, 'total'>> & Omit<Progress, 'total'>,
+) => {
+  const percent = ((progress.loaded || 0) / progress.total) * 100
+  return Math.floor(percent)
 }
