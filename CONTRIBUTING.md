@@ -9,7 +9,7 @@ This project adheres to [GitHub Flow](https://guides.github.com/introduction/flo
 ### Requirements
 
 - [Node.js](https://nodejs.org/) 18.0 or newer
-- NPM 8.0 or newer
+- NPM 10.0 or newer
 
 ### Running Locally
 
@@ -30,7 +30,7 @@ This code base is written in [TypeScript](https://www.typescriptlang.org/) so it
 1. In your application, link to this package instead of a version on NPM
 
    ```sh
-   npm link @oneblink/uploads
+   npm link @oneblink/storage
    ```
 
 ## Release Process

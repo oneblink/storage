@@ -3,7 +3,7 @@
 ## Installation
 
 ```sh
-npm install @oneblink/uploads --save
+npm install @oneblink/storage --save
 ```
 
 ## Tenants
