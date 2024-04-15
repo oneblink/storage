@@ -68,7 +68,7 @@ export interface UploadToS3Props {
   /** Optional header to be included in the request to the OneBlink API */
   requestBodyHeader?: RequestBodyHeader
   /** An optional set of tags that will be applied to the uploaded file */
-  tags?: Record<string, string>
+  tags?: Record<string, string | undefined>
   /** An optional progress listener for tracking the progress of the upload */
   onProgress?: ProgressListener
   /** An optional AbortSignal that can be used to abort the upload */

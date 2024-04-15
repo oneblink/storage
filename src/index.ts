@@ -1,6 +1,6 @@
 import uploadToS3, { UploadToS3Props } from './uploadToS3'
 import { OneBlinkUploaderProps, ProgressListener } from './types'
-import { SubmissionEventTypes, SubmissionTypes } from '@oneblink/types'
+import { SubmissionTypes } from '@oneblink/types'
 
 /**
  * Used to create an instance of the OneBlinkUploader, exposing methods to
@@ -57,35 +57,59 @@ export class OneBlinkUploader {
    * @returns The upload result
    */
   uploadSubmission({
-    body,
-    formId,
-    ...props
+    submission,
+    definition,
+    device,
+    userToken,
+    previousFormSubmissionApprovalId,
+    jobId,
+    formsAppId,
+    externalId,
+    taskId,
+    taskActionId,
+    taskGroupInstanceId,
+    recaptchas,
+    onProgress,
+    abortSignal,
   }: {
     /** The submission data */
-    body: SubmissionTypes.NewS3SubmissionData
-    /** The ID of the form the submission belongs to */
-    formId: number
-    /** Tags associated with the uploaded object */
-    tags: SubmissionEventTypes.S3SubmissionTags
-    /**
-     * A header to be included in the upload request used to create the
-     * submission meta
+    submission: SubmissionTypes.NewS3SubmissionData['submission']
+    /** The form that is being submitted */
+    definition: SubmissionTypes.NewS3SubmissionData['definition']
+    /** The device the form is being submitted */
+    device?: SubmissionTypes.NewS3SubmissionData['device']
+    /** The identifier for the forms app that is being submitted from */
+    formsAppId?: number
+    /** An encrypted token that represents the user */
+    userToken?: string
+    /** The external identifier that represents the submission */
+    externalId?: string /**
+     * The identifier for the previous FormSubmissionApproval that lead to a
+     * clarification request
      */
-    requestBodyHeader: {
-      formsAppId?: number
-      externalId?: string
-      previousFormSubmissionId?: string
-      jobId?: string
-      taskId?: string
-      taskActionId?: string
-      taskGroupInstanceId?: string
-      recaptchas: {
-        token: string
-      }[]
-    }
+    previousFormSubmissionApprovalId?: string
+    /** The identifier of the job that will be marked as submitted */
+    jobId?: string
+    /** The identifier of the task that will be marked as completed */
+    taskId?: string
+    /** The identifier of the task action that was used to complete the task */
+    taskActionId?: string
+    /**
+     * The identifier of the task group instance that the completed task is
+     * associated with
+     */
+    taskGroupInstanceId?: string
+    /** The reCAPTCHA tokens to validate the submission */
+    recaptchas: {
+      /** A reCAPTCHA token */
+      token: string
+    }[]
   } & Pick<UploadToS3Props, 'onProgress' | 'abortSignal'>) {
-    console.log('Uploading submission...')
-
+    const newS3SubmissionData: SubmissionTypes.NewS3SubmissionData = {
+      submission,
+      definition,
+      device,
+    }
     return uploadToS3<{
       submissionTimestamp: string
       submissionId: string
@@ -93,9 +117,25 @@ export class OneBlinkUploader {
       preventPayment: boolean
     }>({
       ...this,
-      body: JSON.stringify(body),
-      key: `forms/${formId}/submission`,
-      ...props,
+      body: JSON.stringify(newS3SubmissionData),
+      key: `forms/${definition.id}/submission`,
+      tags: {
+        userToken,
+        previousFormSubmissionApprovalId,
+        jobId,
+      },
+      abortSignal,
+      onProgress,
+      requestBodyHeader: {
+        formsAppId,
+        externalId,
+        taskId,
+        taskActionId,
+        taskGroupInstanceId,
+        recaptchas,
+        jobId,
+        previousFormSubmissionApprovalId,
+      },
     })
   }
 
