@@ -1,3 +1,4 @@
+import { PutObjectCommandInput } from '@aws-sdk/client-s3'
 import { AWSTypes, SubmissionTypes } from '@oneblink/types'
 
 export type ProgressListenerEvent = { progress: number; total: number }
@@ -27,6 +28,8 @@ export type UploadOptions = {
   /** An optional AbortSignal that can be used to abort the upload */
   abortSignal?: AbortSignal
 }
+
+export type AttachmentUploadData = NonNullable<PutObjectCommandInput['Body']>
 
 export type UploadFormSubmissionOptions = UploadOptions & {
   /** The submission data */
