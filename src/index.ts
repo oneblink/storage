@@ -37,17 +37,13 @@ export class OneBlinkUploader {
    *
    * ```ts
    * const result = await uploader.uploadSubmission({
-   *   body: {
+   *   submission: {
+   *     // ...
+   *   },
+   *   definition: {
    *     // ...
    *   },
    *   onProgress: (progress) => {
-   *     // ...
-   *   },
-   *   formId: 123,
-   *   tags: {
-   *     // ...
-   *   },
-   *   requestBodyHeader: {
    *     // ...
    *   },
    * })
@@ -83,7 +79,8 @@ export class OneBlinkUploader {
     /** An encrypted token that represents the user */
     userToken?: string
     /** The external identifier that represents the submission */
-    externalId?: string /**
+    externalId?: string
+    /**
      * The identifier for the previous FormSubmissionApproval that lead to a
      * clarification request
      */
@@ -100,7 +97,7 @@ export class OneBlinkUploader {
      */
     taskGroupInstanceId?: string
     /** The reCAPTCHA tokens to validate the submission */
-    recaptchas: {
+    recaptchas?: {
       /** A reCAPTCHA token */
       token: string
     }[]
@@ -110,6 +107,20 @@ export class OneBlinkUploader {
       definition,
       device,
     }
+    const tags = new URLSearchParams()
+    if (userToken) {
+      tags.append('userToken', userToken)
+    }
+    if (previousFormSubmissionApprovalId) {
+      tags.append(
+        'previousFormSubmissionApprovalId',
+        previousFormSubmissionApprovalId,
+      )
+    }
+    if (jobId) {
+      tags.append('jobId', jobId)
+    }
+
     return uploadToS3<{
       submissionTimestamp: string
       submissionId: string
@@ -119,11 +130,7 @@ export class OneBlinkUploader {
       ...this,
       body: JSON.stringify(newS3SubmissionData),
       key: `forms/${definition.id}/submission`,
-      tags: {
-        userToken,
-        previousFormSubmissionApprovalId,
-        jobId,
-      },
+      tags,
       abortSignal,
       onProgress,
       requestBodyHeader: {
@@ -132,7 +139,7 @@ export class OneBlinkUploader {
         taskId,
         taskActionId,
         taskGroupInstanceId,
-        recaptchas,
+        recaptchas: recaptchas || {},
         jobId,
         previousFormSubmissionApprovalId,
       },
