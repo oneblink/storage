@@ -1,5 +1,10 @@
 import uploadToS3 from './uploadToS3'
-import { StorageConstructorOptions, UploadFormSubmissionOptions } from './types'
+import {
+  AttachmentUploadData,
+  StorageConstructorOptions,
+  UploadFormSubmissionOptions,
+  UploadOptions,
+} from './types'
 import { SubmissionTypes } from '@oneblink/types'
 import generateFormSubmissionTags from './generateFormSubmissionTags'
 
@@ -118,6 +123,71 @@ export class OneBlinkUploader {
         recaptchas: recaptchas || {},
         jobId,
         previousFormSubmissionApprovalId,
+      },
+    })
+  }
+
+  /**
+   * Upload an form submission attachment.
+   *
+   * #### Example
+   *
+   * ```ts
+   * const abortController = new AbortController()
+   * const result = await uploader.uploadAttachment({
+   *   formId: 1,
+   *   data: new Blob(['a string of data'], {
+   *     type: 'text/plain',
+   *   }),
+   *   fileName: 'file.txt',
+   *   contentType: 'text/plain',
+   *   isPrivate: true,
+   *   abortSignal: abortController.signal,
+   * })
+   * ```
+   *
+   * @param data The attachment upload data and options
+   * @returns The upload result
+   */
+  async uploadAttachment({
+    formId,
+    fileName,
+    contentType,
+    isPrivate,
+    data,
+    username,
+    onProgress,
+    abortSignal,
+  }: UploadOptions & {
+    /** The identifier for the form that is being completed */
+    formId: number
+    /** The name of the file being uploaded */
+    fileName: string
+    /** A standard MIME type describing the format of the contents */
+    contentType: string
+    /** Set to `true` to prevent the file from being downloaded publicly */
+    isPrivate: boolean
+    /** The file data to upload */
+    data: AttachmentUploadData
+    /** A username to allow a single user to download the attachment file */
+    username?: string
+  }) {
+    return await uploadToS3<{
+      url: string
+      attachmentDataId: string
+      uploadedAt: string
+    }>({
+      ...this,
+      contentType,
+      body: data,
+      key: `forms/${formId}/attachments`,
+      abortSignal,
+      onProgress,
+      isPublic: !isPrivate,
+      contentDisposition: `attachment; filename*=UTF-8''${encodeURIComponent(fileName)}`,
+      requestBodyHeader: {
+        username,
+        fileName,
       },
     })
   }

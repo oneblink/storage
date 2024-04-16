@@ -57,9 +57,7 @@ class OBRequestHandler<T> extends FetchHttpHandler {
 const endpointSuffix = '/storage'
 
 /** The properties to be passed to the uploadToS3 function */
-export interface UploadToS3Props
-  extends UploadOptions,
-    StorageConstructorOptions {
+interface UploadToS3Props extends UploadOptions, StorageConstructorOptions {
   /** The key of the file that is being uploaded. */
   key: string
   /**
@@ -73,6 +71,8 @@ export interface UploadToS3Props
   tags?: URLSearchParams
   /** A standard MIME type describing the format of the contents */
   contentType: PutObjectCommandInput['ContentType']
+  /** Set to `true` to make the upload available to download publicly */
+  isPublic?: boolean
 }
 
 async function uploadToS3<T>({
@@ -86,6 +86,7 @@ async function uploadToS3<T>({
   onProgress,
   abortSignal,
   contentType,
+  isPublic,
 }: UploadToS3Props) {
   const requestHandler = new OBRequestHandler<T>({
     getIdToken,
@@ -129,7 +130,7 @@ async function uploadToS3<T>({
       ServerSideEncryption: 'AES256',
       Expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)), // Max 1 year
       CacheControl: 'max-age=31536000', // Max 1 year(365 days),
-      ACL: 'private',
+      ACL: isPublic ? 'public-read' : 'private',
       Tagging: tags?.toString(),
     },
   })
