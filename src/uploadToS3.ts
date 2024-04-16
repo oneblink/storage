@@ -3,7 +3,7 @@ import { Upload, Progress } from '@aws-sdk/lib-storage'
 import { HttpHandlerOptions } from '@smithy/types'
 import { HttpRequest } from '@smithy/protocol-http'
 import { FetchHttpHandler } from '@smithy/fetch-http-handler'
-import { OneBlinkUploaderProps, ProgressListener, BaseResponse } from './types'
+import { StorageConstructorOptions, BaseResponse, UploadOptions } from './types'
 
 const RETRY_ATTEMPTS = 3
 
@@ -17,7 +17,7 @@ class OBRequestHandler<T> extends FetchHttpHandler {
     getIdToken,
     requestBodyHeader,
   }: {
-    getIdToken: OneBlinkUploaderProps['getIdToken']
+    getIdToken: StorageConstructorOptions['getIdToken']
     requestBodyHeader?: RequestBodyHeader
   }) {
     super()
@@ -25,7 +25,7 @@ class OBRequestHandler<T> extends FetchHttpHandler {
     this.requestBodyHeader = requestBodyHeader
   }
 
-  getIdToken: OneBlinkUploaderProps['getIdToken']
+  getIdToken: StorageConstructorOptions['getIdToken']
   requestBodyHeader?: RequestBodyHeader
   response?: T & BaseResponse
 
@@ -57,7 +57,9 @@ class OBRequestHandler<T> extends FetchHttpHandler {
 const endpointSuffix = '/storage'
 
 /** The properties to be passed to the uploadToS3 function */
-export interface UploadToS3Props {
+export interface UploadToS3Props
+  extends UploadOptions,
+    StorageConstructorOptions {
   /** The key of the file that is being uploaded. */
   key: string
   /**
@@ -69,10 +71,8 @@ export interface UploadToS3Props {
   requestBodyHeader?: RequestBodyHeader
   /** An optional set of tags that will be applied to the uploaded file */
   tags?: URLSearchParams
-  /** An optional progress listener for tracking the progress of the upload */
-  onProgress?: ProgressListener
-  /** An optional AbortSignal that can be used to abort the upload */
-  abortSignal?: AbortSignal
+  /** A standard MIME type describing the format of the contents */
+  contentType: PutObjectCommandInput['ContentType']
 }
 
 async function uploadToS3<T>({
@@ -85,7 +85,8 @@ async function uploadToS3<T>({
   getIdToken,
   onProgress,
   abortSignal,
-}: OneBlinkUploaderProps & UploadToS3Props) {
+  contentType,
+}: UploadToS3Props) {
   const requestHandler = new OBRequestHandler<T>({
     getIdToken,
     requestBodyHeader,
@@ -124,7 +125,7 @@ async function uploadToS3<T>({
       Bucket: 'storage.oneblink.io',
       Key: key,
       Body: body,
-      ContentType: 'application/json',
+      ContentType: contentType,
       ServerSideEncryption: 'AES256',
       Expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)), // Max 1 year
       CacheControl: 'max-age=31536000', // Max 1 year(365 days),
