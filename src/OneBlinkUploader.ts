@@ -12,7 +12,7 @@ import generateFormSubmissionTags from './generateFormSubmissionTags'
  * Used to create an instance of the OneBlinkUploader, exposing methods to
  * upload submissions and other types of files
  */
-export class OneBlinkUploader {
+export default class OneBlinkUploader {
   apiOrigin: StorageConstructorOptions['apiOrigin']
   region: StorageConstructorOptions['region']
   getIdToken: StorageConstructorOptions['getIdToken']
@@ -110,7 +110,7 @@ export class OneBlinkUploader {
       ...this,
       contentType: 'application/json',
       body: JSON.stringify(newS3SubmissionData),
-      key: `forms/${definition.id}/submission`,
+      key: `forms/${definition.id}/submissions`,
       tags,
       abortSignal,
       onProgress,
