@@ -120,7 +120,7 @@ export default class OneBlinkUploader {
         taskId,
         taskActionId,
         taskGroupInstanceId,
-        recaptchas: recaptchas || {},
+        recaptchas: recaptchas || [],
         jobId,
         previousFormSubmissionApprovalId,
       },
