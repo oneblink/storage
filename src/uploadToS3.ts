@@ -1,4 +1,4 @@
-import { PutObjectCommandInput, S3Client, Tag } from '@aws-sdk/client-s3'
+import { PutObjectCommandInput, S3Client } from '@aws-sdk/client-s3'
 import { Upload, Progress } from '@aws-sdk/lib-storage'
 import { HttpHandlerOptions } from '@smithy/types'
 import { HttpRequest } from '@smithy/protocol-http'
@@ -68,7 +68,7 @@ export interface UploadToS3Props {
   /** Optional header to be included in the request to the OneBlink API */
   requestBodyHeader?: RequestBodyHeader
   /** An optional set of tags that will be applied to the uploaded file */
-  tags?: Record<string, string | undefined>
+  tags?: URLSearchParams
   /** An optional progress listener for tracking the progress of the upload */
   onProgress?: ProgressListener
   /** An optional AbortSignal that can be used to abort the upload */
@@ -110,14 +110,6 @@ async function uploadToS3<T>({
     client: s3Client,
     partSize: 5 * 1024 * 1024,
     queueSize: determineQueueSize(),
-    tags: !tags
-      ? undefined
-      : Object.entries(tags).reduce<Tag[]>((memo, [Key, Value]) => {
-          if (!!Key && !!Value) {
-            memo.push({ Key, Value })
-          }
-          return memo
-        }, []),
     //Related github issue: https://github.com/aws/aws-sdk-js-v3/issues/2311
     //This is a variable that is set to false by default, setting it to true
     //means that it will force the upload to fail when one part fails on
@@ -129,7 +121,7 @@ async function uploadToS3<T>({
       // new S3 bucket domain concept with includes the bucket in the
       // domain instead of the path. We need it in the path to use the
       // API as the domain.
-      Bucket: 'storage.test.oneblink.io',
+      Bucket: 'storage.oneblink.io',
       Key: key,
       Body: body,
       ContentType: 'application/json',
@@ -137,6 +129,7 @@ async function uploadToS3<T>({
       Expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)), // Max 1 year
       CacheControl: 'max-age=31536000', // Max 1 year(365 days),
       ACL: 'private',
+      Tagging: tags?.toString(),
     },
   })
 
