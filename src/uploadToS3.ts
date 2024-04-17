@@ -108,6 +108,13 @@ async function uploadToS3<T>({
     maxAttempts: RETRY_ATTEMPTS,
   })
 
+  if (isPublic) {
+    if (!tags) {
+      tags = new URLSearchParams()
+    }
+    tags?.append('public-read', 'yes')
+  }
+
   const managedUpload = new Upload({
     client: s3Client,
     partSize: 5 * 1024 * 1024,
@@ -130,7 +137,7 @@ async function uploadToS3<T>({
       ServerSideEncryption: 'AES256',
       Expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)), // Max 1 year
       CacheControl: 'max-age=31536000', // Max 1 year(365 days),
-      ACL: isPublic ? 'public-read' : 'bucket-owner-full-control',
+      ACL: 'bucket-owner-full-control',
       Tagging: tags?.toString(),
     },
   })
