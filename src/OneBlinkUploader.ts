@@ -7,7 +7,7 @@ import {
 } from './types'
 import { SubmissionTypes } from '@oneblink/types'
 import generateFormSubmissionTags from './generateFormSubmissionTags'
-
+import { v4 as uuid } from 'uuid'
 /**
  * Used to create an instance of the OneBlinkUploader, exposing methods to
  * upload submissions and other types of files
@@ -251,6 +251,55 @@ export default class OneBlinkUploader {
         jobId,
         previousFormSubmissionApprovalId,
       }),
+      abortSignal,
+      onProgress,
+    })
+  }
+
+  /**
+   * Upload an asset file. Asset files are always public.
+   *
+   * #### Example
+   *
+   * ```ts
+   * const abortController = new AbortController()
+   * const result = await uploader.uploadAttachment({
+   *   onProgress: (progress) => {
+   *     // ...
+   *   },
+   *   data: new Blob(['a string of data'], {
+   *     type: 'text/plain',
+   *   }),
+   *   fileName: 'file.txt',
+   *   contentType: 'text/plain',
+   *   abortSignal: abortController.signal,
+   * })
+   * ```
+   *
+   * @param data The asset upload data and options
+   * @returns The upload result
+   */
+  async uploadAsset({
+    onProgress,
+    abortSignal,
+    data,
+    contentType,
+    fileName,
+  }: UploadOptions & {
+    /** The file data to upload */
+    data: AttachmentUploadData
+    /** A standard MIME type describing the format of the contents */
+    contentType: string
+    /** The name of the file being uploaded */
+    fileName: string
+  }) {
+    return await uploadToS3<{
+      url: string
+    }>({
+      ...this,
+      contentType,
+      body: data,
+      key: `assets/${uuid()}/${fileName}`,
       abortSignal,
       onProgress,
     })
