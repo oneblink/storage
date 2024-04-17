@@ -130,7 +130,7 @@ async function uploadToS3<T>({
       ServerSideEncryption: 'AES256',
       Expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)), // Max 1 year
       CacheControl: 'max-age=31536000', // Max 1 year(365 days),
-      ACL: isPublic ? 'public-read' : 'private',
+      ACL: isPublic ? 'public-read' : 'bucket-owner-full-control',
       Tagging: tags?.toString(),
     },
   })
