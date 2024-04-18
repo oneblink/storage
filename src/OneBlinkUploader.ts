@@ -255,4 +255,33 @@ export default class OneBlinkUploader {
       onProgress,
     })
   }
+
+  /**
+   * Upload form prefill data.
+   *
+   * #### Example
+   *
+   * @param data The prefill upload data and options
+   * @returns The upload result
+   */
+  async uploadPrefillData({
+    formId,
+    prefillData,
+    onProgress,
+    abortSignal,
+  }: UploadOptions & {
+    /** The identifier for the form that the prefill data is associated with */
+    formId: number
+    /** The prefill data to upload */
+    prefillData: SubmissionTypes.NewS3SubmissionData['submission']
+  }) {
+    return await uploadToS3({
+      ...this,
+      contentType: 'application/json',
+      body: JSON.stringify(prefillData),
+      key: `forms/${formId}/prefill`,
+      abortSignal,
+      onProgress,
+    })
+  }
 }
