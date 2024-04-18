@@ -393,7 +393,7 @@ export default class OneBlinkUploader {
       ...this,
       contentType: 'application/json',
       body: JSON.stringify(prefillData),
-      key: `forms/${formId}/prefill`,
+      key: `forms/${formId}/pre-fill`,
       abortSignal,
       onProgress,
     })
