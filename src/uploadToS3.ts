@@ -4,6 +4,7 @@ import { HttpHandlerOptions } from '@smithy/types'
 import { HttpRequest } from '@smithy/protocol-http'
 import { FetchHttpHandler } from '@smithy/fetch-http-handler'
 import { StorageConstructorOptions, BaseResponse, UploadOptions } from './types'
+import OneBlinkStorageError from './OneBlinkStorageError'
 
 const RETRY_ATTEMPTS = 3
 
@@ -27,7 +28,11 @@ class OBRequestHandler<T> extends FetchHttpHandler {
 
   getIdToken: StorageConstructorOptions['getIdToken']
   requestBodyHeader?: RequestBodyHeader
-  response?: T & BaseResponse
+  successResponse?: T & BaseResponse
+  failResponse?: {
+    statusCode: number
+    message: string
+  }
 
   async handle(request: HttpRequest, options?: HttpHandlerOptions) {
     const token = await this.getIdToken()
@@ -39,16 +44,20 @@ class OBRequestHandler<T> extends FetchHttpHandler {
         this.requestBodyHeader,
       )
     }
-    if (this.response) {
-      request.query['key'] = this.response.s3.key
+    if (this.successResponse) {
+      request.query['key'] = this.successResponse.s3.key
     }
     const result = await super.handle(request, options)
-    console.log('result', result)
-    const response = result.response.headers['x-oneblink-response'] as
-      | string
-      | undefined
-    if (response) {
-      this.response = JSON.parse(response)
+    if (
+      result.response.headers['content-type'] === 'application/json' &&
+      result.response.statusCode >= 400
+    ) {
+      const fetchResponse = new Response(result.response.body)
+      this.failResponse = await fetchResponse.json()
+    }
+    const response = result.response.headers['x-oneblink-response']
+    if (typeof response === 'string') {
+      this.successResponse = JSON.parse(response)
     }
     return result
   }
@@ -157,14 +166,24 @@ async function uploadToS3<T>({
     managedUpload.abort()
   })
 
-  await managedUpload.done()
+  try {
+    await managedUpload.done()
+  } catch (error) {
+    if (requestHandler.failResponse) {
+      throw new OneBlinkStorageError(requestHandler.failResponse.message, {
+        httpStatusCode: requestHandler.failResponse.statusCode,
+        originalError: error instanceof Error ? error : undefined,
+      })
+    }
+    throw error
+  }
 
-  if (!requestHandler.response) {
+  if (!requestHandler.successResponse) {
     throw new Error(
-      'No response from server. Something went wrong in the OneBlink/uploads SDK.',
+      'No response from server. Something went wrong in "@oneBlink/uploads".',
     )
   }
-  return requestHandler.response
+  return requestHandler.successResponse
 }
 
 export default uploadToS3
