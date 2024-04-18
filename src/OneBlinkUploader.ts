@@ -360,6 +360,21 @@ export default class OneBlinkUploader {
    *
    * #### Example
    *
+   * ```ts
+   * const abortController = new AbortController()
+   * const result = await uploader.uploadPrefillData({
+   *   onProgress: (progress) => {
+   *     // ...
+   *   },
+   *   data: {
+   *     field1: 'abc',
+   *     field2: 123,
+   *   },
+   *   formId: 12,
+   *   abortSignal: abortController.signal,
+   * })
+   * ```
+   *
    * @param data The prefill upload data and options
    * @returns The upload result
    */
