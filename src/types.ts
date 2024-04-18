@@ -52,3 +52,12 @@ export type UploadFormSubmissionOptions = UploadOptions & {
   /** The identifier of the job that will be marked as submitted */
   jobId?: string
 }
+
+export type UploadAssetOptions = UploadOptions & {
+  /** The file data to upload */
+  data: AttachmentUploadData
+  /** A standard MIME type describing the format of the contents */
+  contentType: string
+  /** The name of the file being uploaded */
+  fileName: string
+}

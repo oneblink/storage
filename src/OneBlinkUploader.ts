@@ -2,12 +2,12 @@ import uploadToS3 from './uploadToS3'
 import {
   AttachmentUploadData,
   StorageConstructorOptions,
+  UploadAssetOptions,
   UploadFormSubmissionOptions,
   UploadOptions,
 } from './types'
 import { SubmissionTypes } from '@oneblink/types'
 import generateFormSubmissionTags from './generateFormSubmissionTags'
-
 /**
  * Used to create an instance of the OneBlinkUploader, exposing methods to
  * upload submissions and other types of files
@@ -253,6 +253,105 @@ export default class OneBlinkUploader {
       }),
       abortSignal,
       onProgress,
+    })
+  }
+
+  /**
+   * Upload an asset file. Asset files are always public.
+   *
+   * #### Example
+   *
+   * ```ts
+   * const abortController = new AbortController()
+   * const result = await uploader.uploadAttachment({
+   *   onProgress: (progress) => {
+   *     // ...
+   *   },
+   *   data: new Blob(['a string of data'], {
+   *     type: 'text/plain',
+   *   }),
+   *   fileName: 'file.txt',
+   *   contentType: 'text/plain',
+   *   abortSignal: abortController.signal,
+   *   organisatsionId: 'abc123',
+   * })
+   * ```
+   *
+   * @param data The asset upload data and options
+   * @returns The upload result
+   */
+  async uploadAsset({
+    onProgress,
+    abortSignal,
+    data,
+    contentType,
+    fileName,
+    organisationId,
+  }: UploadOptions &
+    UploadAssetOptions & {
+      /** The identifier for the organisation that owns the asset */
+      organisationId: string
+    }) {
+    return await uploadToS3<{
+      url: string
+    }>({
+      ...this,
+      contentType,
+      body: data,
+      key: `organisations/${organisationId}/assets`,
+      abortSignal,
+      onProgress,
+      requestBodyHeader: {
+        fileName,
+      },
+      isPublic: true,
+    })
+  }
+
+  /**
+   * Upload an asset file for a product service such as Product Notifications.
+   * Asset files are always public.
+   *
+   * #### Example
+   *
+   * ```ts
+   * const abortController = new AbortController()
+   * const result = await uploader.uploadAttachment({
+   *   onProgress: (progress) => {
+   *     // ...
+   *   },
+   *   data: new Blob(['a string of data'], {
+   *     type: 'text/plain',
+   *   }),
+   *   fileName: 'file.txt',
+   *   contentType: 'text/plain',
+   *   abortSignal: abortController.signal,
+   * })
+   * ```
+   *
+   * @param data The asset upload data and options
+   * @returns The upload result
+   */
+  async uploadProductAsset({
+    onProgress,
+    abortSignal,
+    data,
+    contentType,
+    fileName,
+  }: UploadOptions & UploadAssetOptions) {
+    return await uploadToS3<{
+      url: string
+    }>({
+      ...this,
+      contentType,
+      body: data,
+      key: `administration/assets`,
+      abortSignal,
+      onProgress,
+      requestBodyHeader: {
+        fileName,
+      },
+      isPublic: true,
     })
   }
 }
