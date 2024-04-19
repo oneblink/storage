@@ -87,31 +87,6 @@ export class OneBlinkNodeJsHandler<T>
   }
 
   determineQueueSize() {
-    let queueSize = 1 // default to 1 as the lowest common denominator
-    // Return as though using highest speed for Node environments
-    if (!window) return 10
-    if (
-      window.navigator &&
-      'connection' in window.navigator &&
-      !!window.navigator.connection &&
-      // @ts-expect-error effectiveType prop is still in draft
-      window.navigator.connection.effectiveType
-    ) {
-      // @ts-expect-error effectiveType prop is still in draft
-      switch (window.navigator.connection.effectiveType) {
-        case 'slow-2g':
-        case '2g':
-          queueSize = 1
-          break
-        case '3g':
-          queueSize = 2
-          break
-        case '4g':
-          queueSize = 10
-          break
-      }
-    }
-
-    return queueSize
+    return 10
   }
 }
