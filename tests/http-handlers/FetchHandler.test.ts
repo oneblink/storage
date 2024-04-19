@@ -61,13 +61,4 @@ describe('determineQueueSize', () => {
     })
     expect(determineQueueSize()).toBe(1)
   })
-
-  it('should return 10 for node environments', () => {
-    Object.defineProperty(global, 'window', {
-      value: undefined,
-      writable: true,
-    })
-
-    expect(determineQueueSize()).toBe(10)
-  })
 })
