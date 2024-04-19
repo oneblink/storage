@@ -1,67 +1,11 @@
 import { PutObjectCommandInput, S3Client } from '@aws-sdk/client-s3'
 import { Upload, Progress } from '@aws-sdk/lib-storage'
-import { HttpHandlerOptions } from '@smithy/types'
-import { HttpRequest } from '@smithy/protocol-http'
-import { FetchHttpHandler } from '@smithy/fetch-http-handler'
-import { StorageConstructorOptions, BaseResponse, UploadOptions } from './types'
+import { StorageConstructorOptions, UploadOptions } from './types'
 import OneBlinkStorageError from './OneBlinkStorageError'
+import { getRequestHandler } from './http-handlers'
+import { RequestBodyHeader } from './http-handlers/types'
 
 const RETRY_ATTEMPTS = 3
-
-type RequestBodyHeader = Record<string, unknown>
-// Our own custom request handler to allow setting customer headers for
-// authentication. Also allow the response header which includes dynamic
-// data from the lambda at edge to be retrieved and held for later when
-// the upload has completed.
-class OBRequestHandler<T> extends FetchHttpHandler {
-  constructor({
-    getIdToken,
-    requestBodyHeader,
-  }: {
-    getIdToken: StorageConstructorOptions['getIdToken']
-    requestBodyHeader?: RequestBodyHeader
-  }) {
-    super()
-    this.getIdToken = getIdToken
-    this.requestBodyHeader = requestBodyHeader
-  }
-
-  getIdToken: StorageConstructorOptions['getIdToken']
-  requestBodyHeader?: RequestBodyHeader
-  successResponse?: T & BaseResponse
-  failResponse?: {
-    statusCode: number
-    message: string
-  }
-
-  async handle(request: HttpRequest, options?: HttpHandlerOptions) {
-    const token = await this.getIdToken()
-    if (token) {
-      request.headers['x-oneblink-authorization'] = 'Bearer ' + token
-    }
-    if (this.requestBodyHeader) {
-      request.headers['x-oneblink-request-body'] = JSON.stringify(
-        this.requestBodyHeader,
-      )
-    }
-    if (this.successResponse) {
-      request.query['key'] = this.successResponse.s3.key
-    }
-    const result = await super.handle(request, options)
-    if (
-      result.response.headers['content-type'] === 'application/json' &&
-      result.response.statusCode >= 400
-    ) {
-      const fetchResponse = new Response(result.response.body)
-      this.failResponse = await fetchResponse.json()
-    }
-    const response = result.response.headers['x-oneblink-response']
-    if (typeof response === 'string') {
-      this.successResponse = JSON.parse(response)
-    }
-    return result
-  }
-}
 
 const endpointSuffix = '/storage'
 
@@ -97,7 +41,8 @@ async function uploadToS3<T>({
   contentType,
   isPublic,
 }: UploadToS3Props) {
-  const requestHandler = new OBRequestHandler<T>({
+  const RequestHandler = getRequestHandler()
+  const requestHandler = new RequestHandler<T>({
     getIdToken,
     requestBodyHeader,
   })
@@ -127,7 +72,7 @@ async function uploadToS3<T>({
   const managedUpload = new Upload({
     client: s3Client,
     partSize: 5 * 1024 * 1024,
-    queueSize: determineQueueSize(),
+    queueSize: requestHandler.determineQueueSize(),
     //Related github issue: https://github.com/aws/aws-sdk-js-v3/issues/2311
     //This is a variable that is set to false by default, setting it to true
     //means that it will force the upload to fail when one part fails on
@@ -152,7 +97,7 @@ async function uploadToS3<T>({
   })
 
   managedUpload.on('httpUploadProgress', (progress) => {
-    console.log('Progress', progress)
+    console.log('S3 upload progress for key', key, progress)
     if (onProgress && progress.total) {
       const percent = determineUploadProgressAsPercentage({
         ...progress,
@@ -178,44 +123,17 @@ async function uploadToS3<T>({
     throw error
   }
 
-  if (!requestHandler.successResponse) {
+  if (!requestHandler.oneblinkResponse) {
     throw new Error(
-      'No response from server. Something went wrong in "@oneBlink/uploads".',
+      'No response from server. Something went wrong in "@oneblink/uploads".',
     )
   }
-  return requestHandler.successResponse
+  return requestHandler.oneblinkResponse
 }
 
 export default uploadToS3
 
-export const determineQueueSize = () => {
-  let queueSize = 1 // default to 1 as the lowest common denominator
-  // Return as though using highest speed for Node environments
-  if (!window) return 10
-  if (
-    window.navigator &&
-    'connection' in window.navigator &&
-    !!window.navigator.connection &&
-    // @ts-expect-error effectiveType prop is still in draft
-    window.navigator.connection.effectiveType
-  ) {
-    // @ts-expect-error effectiveType prop is still in draft
-    switch (window.navigator.connection.effectiveType) {
-      case 'slow-2g':
-      case '2g':
-        queueSize = 1
-        break
-      case '3g':
-        queueSize = 2
-        break
-      case '4g':
-        queueSize = 10
-        break
-    }
-  }
-
-  return queueSize
-}
+export const determineQueueSize = () => {}
 
 export const determineUploadProgressAsPercentage = (
   progress: Required<Pick<Progress, 'total'>> & Omit<Progress, 'total'>,
