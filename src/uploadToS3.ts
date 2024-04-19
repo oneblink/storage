@@ -133,8 +133,6 @@ async function uploadToS3<T>({
 
 export default uploadToS3
 
-export const determineQueueSize = () => {}
-
 export const determineUploadProgressAsPercentage = (
   progress: Required<Pick<Progress, 'total'>> & Omit<Progress, 'total'>,
 ) => {
