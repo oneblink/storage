@@ -1,5 +1,5 @@
 import { PutObjectCommandInput } from '@aws-sdk/client-s3'
-import { AWSTypes, SubmissionTypes } from '@oneblink/types'
+import { SubmissionTypes } from '@oneblink/types'
 
 export type ProgressListenerEvent = { progress: number; total: number }
 export type ProgressListener = (progress: ProgressListenerEvent) => void
@@ -16,10 +16,6 @@ export type StorageConstructorOptions = {
    * will be set with the value.
    */
   getIdToken: () => Promise<string | undefined>
-}
-
-export type BaseResponse = {
-  s3: AWSTypes.S3Configuration
 }
 
 export type UploadOptions = {
