@@ -390,7 +390,9 @@ export default class OneBlinkUploader {
     /** The prefill data to upload */
     prefillData: SubmissionTypes.NewS3SubmissionData['submission']
   }) {
-    return await uploadToS3({
+    return await uploadToS3<{
+      preFillFormDataId: string
+    }>({
       ...this,
       contentType: 'application/json',
       body: JSON.stringify(prefillData),
@@ -430,9 +432,7 @@ export default class OneBlinkUploader {
     contentType,
     fileName,
   }: UploadOptions & UploadEmailAttachmentOptions) {
-    return await uploadToS3<{
-      preFillFormDataId: string
-    }>({
+    return await uploadToS3({
       ...this,
       contentType,
       body: data,
