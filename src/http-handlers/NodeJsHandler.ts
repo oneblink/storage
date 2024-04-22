@@ -49,13 +49,13 @@ export class OneBlinkNodeJsHandler<T>
     switch (result.response.headers['content-type']) {
       case 'application/json; charset=utf-8':
       case 'application/json': {
-        const { Readable } = await import('stream')
+        const { Readable, consumers } = await import('stream')
         if (result.response.body instanceof Readable) {
-          const { json } = await import('stream/consumers')
           this.failResponse = {
             statusCode: result.response.statusCode,
-            message: ((await json(result.response.body)) as FailResponse)
-              .message,
+            message: (
+              (await consumers.json(result.response.body)) as FailResponse
+            ).message,
           }
         }
 
@@ -68,12 +68,11 @@ export class OneBlinkNodeJsHandler<T>
         break
       }
       case 'text/html': {
-        const { Readable } = await import('stream')
+        const { Readable, consumers } = await import('stream')
         if (result.response.body instanceof Readable) {
-          const { text } = await import('stream/consumers')
           this.failResponse = {
             statusCode: result.response.statusCode,
-            message: await text(result.response.body),
+            message: await consumers.text(result.response.body),
           }
         }
 
