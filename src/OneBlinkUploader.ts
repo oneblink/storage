@@ -400,6 +400,29 @@ export default class OneBlinkUploader {
     })
   }
 
+  /**
+   * Upload an email attachment. Email attachments are always private.
+   *
+   * #### Example
+   *
+   * ```ts
+   * const abortController = new AbortController()
+   * const result = await uploader.uploadEmailAttachment({
+   *   onProgress: (progress) => {
+   *     // ...
+   *   },
+   *   data: new Blob(['a string of data'], {
+   *     type: 'text/plain',
+   *   }),
+   *   fileName: 'file.txt',
+   *   contentType: 'text/plain',
+   *   abortSignal: abortController.signal,
+   * })
+   * ```
+   *
+   * @param data The email attachment data and options
+   * @returns The upload result
+   */
   async uploadEmailAttachment({
     onProgress,
     abortSignal,
