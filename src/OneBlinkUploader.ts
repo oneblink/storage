@@ -430,7 +430,9 @@ export default class OneBlinkUploader {
     contentType,
     fileName,
   }: UploadOptions & UploadEmailAttachmentOptions) {
-    return await uploadToS3({
+    return await uploadToS3<{
+      preFillFormDataId: string
+    }>({
       ...this,
       contentType,
       body: data,
