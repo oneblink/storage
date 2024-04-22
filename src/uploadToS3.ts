@@ -84,7 +84,7 @@ async function uploadToS3<T>({
       // new S3 bucket domain concept with includes the bucket in the
       // domain instead of the path. We need it in the path to use the
       // API as the domain.
-      Bucket: 'storage.oneblink.io',
+      Bucket: apiOrigin.split('.').slice(-2).join('.'),
       Key: key,
       Body: body,
       ContentType: contentType,
