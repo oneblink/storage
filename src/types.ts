@@ -57,3 +57,5 @@ export type UploadAssetOptions = UploadOptions & {
   /** The name of the file being uploaded */
   fileName: string
 }
+
+export type UploadEmailAttachmentOptions = UploadAssetOptions

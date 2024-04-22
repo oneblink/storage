@@ -5,6 +5,7 @@ import {
   UploadAssetOptions,
   UploadFormSubmissionOptions,
   UploadOptions,
+  UploadEmailAttachmentOptions,
 } from './types'
 import { SubmissionTypes } from '@oneblink/types'
 import generateFormSubmissionTags from './generateFormSubmissionTags'
@@ -396,6 +397,27 @@ export default class OneBlinkUploader {
       key: `forms/${formId}/pre-fill`,
       abortSignal,
       onProgress,
+    })
+  }
+
+  async uploadEmailAttachment({
+    onProgress,
+    abortSignal,
+    data,
+    contentType,
+    fileName,
+  }: UploadOptions & UploadEmailAttachmentOptions) {
+    return await uploadToS3({
+      ...this,
+      contentType,
+      body: data,
+      key: 'email-attachments',
+      abortSignal,
+      onProgress,
+      requestBodyHeader: {
+        fileName,
+      },
+      isPublic: false,
     })
   }
 }
