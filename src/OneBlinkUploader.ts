@@ -5,6 +5,7 @@ import {
   UploadAssetOptions,
   UploadFormSubmissionOptions,
   UploadOptions,
+  UploadEmailAttachmentOptions,
 } from './types'
 import { SubmissionTypes } from '@oneblink/types'
 import generateFormSubmissionTags from './generateFormSubmissionTags'
@@ -396,6 +397,50 @@ export default class OneBlinkUploader {
       key: `forms/${formId}/pre-fill`,
       abortSignal,
       onProgress,
+    })
+  }
+
+  /**
+   * Upload an email attachment. Email attachments are always private.
+   *
+   * #### Example
+   *
+   * ```ts
+   * const abortController = new AbortController()
+   * const result = await uploader.uploadEmailAttachment({
+   *   onProgress: (progress) => {
+   *     // ...
+   *   },
+   *   data: new Blob(['a string of data'], {
+   *     type: 'text/plain',
+   *   }),
+   *   fileName: 'file.txt',
+   *   contentType: 'text/plain',
+   *   abortSignal: abortController.signal,
+   * })
+   * ```
+   *
+   * @param data The email attachment data and options
+   * @returns The upload result
+   */
+  async uploadEmailAttachment({
+    onProgress,
+    abortSignal,
+    data,
+    contentType,
+    fileName,
+  }: UploadOptions & UploadEmailAttachmentOptions) {
+    return await uploadToS3({
+      ...this,
+      contentType,
+      body: data,
+      key: 'email-attachments',
+      abortSignal,
+      onProgress,
+      requestBodyHeader: {
+        fileName,
+      },
+      isPublic: false,
     })
   }
 }
