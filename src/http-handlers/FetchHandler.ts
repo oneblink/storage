@@ -47,6 +47,7 @@ export class OneBlinkFetchHandler<T>
     }
 
     switch (result.response.headers['content-type']) {
+      case 'application/json; charset=utf-8':
       case 'application/json': {
         if (
           window.ReadableStream &&
