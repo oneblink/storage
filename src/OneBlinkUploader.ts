@@ -6,6 +6,7 @@ import {
   UploadFormSubmissionOptions,
   UploadOptions,
   UploadEmailAttachmentOptions,
+  UploadPDFConversionOptions,
 } from './types'
 import { SubmissionTypes } from '@oneblink/types'
 import generateFormSubmissionTags from './generateFormSubmissionTags'
@@ -443,6 +444,47 @@ export default class OneBlinkUploader {
         fileName,
       },
       isPublic: false,
+    })
+  }
+
+  /**
+   * Upload a PDF for conversion. PDF Conversions are always public.
+   *
+   * #### Example
+   *
+   * ```ts
+   * const abortController = new AbortController()
+   * const result = await uploader.uploadPDFConversion({
+   *   onProgress: (progress) => {
+   *     // ...
+   *   },
+   *   data: new Blob(['a string of data'], {
+   *     type: 'text/plain',
+   *   }),
+   *   fileName: 'file.txt',
+   *   contentType: 'text/plain',
+   *   abortSignal: abortController.signal,
+   * })
+   * ```
+   *
+   * @param data The PDF data and options
+   * @returns The upload result
+   */
+  async uploadPDFConversion({
+    onProgress,
+    abortSignal,
+    data,
+    contentType,
+    formId,
+  }: UploadPDFConversionOptions) {
+    return await uploadToS3({
+      ...this,
+      contentType,
+      body: data,
+      key: `forms/${formId}/pdf-conversion`,
+      abortSignal,
+      onProgress,
+      isPublic: true,
     })
   }
 }
