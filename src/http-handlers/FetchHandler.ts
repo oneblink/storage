@@ -46,42 +46,21 @@ export class OneBlinkFetchHandler<T>
       return result
     }
 
+    const fetchResponse = new Response(result.response.body)
+
     switch (result.response.headers['content-type']) {
       case 'application/json; charset=utf-8':
       case 'application/json': {
-        if (
-          window.ReadableStream &&
-          result.response.body instanceof window.ReadableStream
-        ) {
-          const fetchResponse = new Response(result.response.body)
-          this.failResponse = {
-            statusCode: result.response.statusCode,
-            message: (await fetchResponse.json()).message,
-          }
-        }
-
-        if (typeof result.response.body === 'string') {
-          this.failResponse = {
-            statusCode: result.response.statusCode,
-            message: JSON.parse(result.response.body).message,
-          }
+        this.failResponse = {
+          statusCode: result.response.statusCode,
+          message: (await fetchResponse.json()).message,
         }
         break
       }
-      case 'text/html': {
-        if (
-          window.ReadableStream &&
-          result.response.body instanceof window.ReadableStream
-        ) {
-          const fetchResponse = new Response(result.response.body)
-          this.failResponse = {
-            statusCode: result.response.statusCode,
-            message: await fetchResponse.text(),
-          }
-        }
-
-        if (typeof result.response.body === 'string') {
-          console.log('response', result.response.body)
+      default: {
+        this.failResponse = {
+          statusCode: result.response.statusCode,
+          message: await fetchResponse.text(),
         }
         break
       }
