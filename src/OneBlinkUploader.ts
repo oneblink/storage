@@ -458,11 +458,8 @@ export default class OneBlinkUploader {
    *   onProgress: (progress) => {
    *     // ...
    *   },
-   *   data: new Blob(['a string of data'], {
-   *     type: 'text/plain',
-   *   }),
-   *   fileName: 'file.txt',
-   *   contentType: 'text/plain',
+   *   data: pdfData,
+   *   formId: 1,
    *   abortSignal: abortController.signal,
    * })
    * ```
