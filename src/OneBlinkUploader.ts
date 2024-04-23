@@ -448,7 +448,7 @@ export default class OneBlinkUploader {
   }
 
   /**
-   * Upload a PDF for conversion. PDF Conversions are always public.
+   * Upload a PDF for conversion. PDF Conversions are always private.
    *
    * #### Example
    *
@@ -474,17 +474,15 @@ export default class OneBlinkUploader {
     onProgress,
     abortSignal,
     data,
-    contentType,
     formId,
   }: UploadPDFConversionOptions) {
     return await uploadToS3({
       ...this,
-      contentType,
+      contentType: 'application/pdf',
       body: data,
       key: `forms/${formId}/pdf-conversion`,
       abortSignal,
       onProgress,
-      isPublic: true,
     })
   }
 }
