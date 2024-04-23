@@ -58,8 +58,11 @@ export type UploadAssetOptions = UploadOptions & {
   fileName: string
 }
 
-export type UploadPDFConversionOptions = UploadAssetOptions & {
+export type UploadPDFConversionOptions = UploadOptions & {
+  /** The PDF File to upload */
+  data: AttachmentUploadData
   /** The id of the Form that the PDF Conversion is occurring on */
   formId: number
 }
+
 export type UploadEmailAttachmentOptions = UploadAssetOptions
