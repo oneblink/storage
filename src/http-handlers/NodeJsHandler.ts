@@ -49,8 +49,9 @@ export class OneBlinkNodeJsHandler<T>
     switch (result.response.headers['content-type']) {
       case 'application/json; charset=utf-8':
       case 'application/json': {
-        const { Readable, consumers } = await import('stream')
+        const { Readable } = await import('stream')
         if (result.response.body instanceof Readable) {
+          const consumers = await import('stream/consumers')
           this.failResponse = {
             statusCode: result.response.statusCode,
             message: (
