@@ -2,8 +2,9 @@ import { PutObjectCommandInput, S3Client } from '@aws-sdk/client-s3'
 import { Upload, Progress } from '@aws-sdk/lib-storage'
 import { StorageConstructorOptions, UploadOptions } from './types'
 import OneBlinkStorageError from './OneBlinkStorageError'
-import { getRequestHandler } from './http-handlers'
 import { RequestBodyHeader } from './http-handlers/types'
+import { getOneBlinkHttpHandler } from './http-handlers'
+import { OneBlinkRequestHandler } from './OneBlinkRequestHandler'
 
 const RETRY_ATTEMPTS = 3
 
@@ -34,57 +35,64 @@ async function uploadToS3<T>({
   key,
   body,
   requestBodyHeader,
-  tags,
-  getIdToken,
+  tags = new URLSearchParams(),
+  getBearerToken,
   onProgress,
   abortSignal,
   contentType,
   isPublic,
 }: UploadToS3Props) {
-  const RequestHandler = getRequestHandler()
-  const requestHandler = new RequestHandler<T>({
-    getIdToken,
+  const oneBlinkHttpHandler = getOneBlinkHttpHandler()
+  const oneBlinkRequestHandler = new OneBlinkRequestHandler<T>(
+    oneBlinkHttpHandler,
     requestBodyHeader,
-  })
+  )
+
+  // The endpoint we use instead of the the AWS S3 endpoint is
+  // formatted internally by the AWS S3 SDK. It will add the Bucket
+  // parameter below as the subdomain to the URL (as long as the
+  // bucket does not contain a `.`). The logic below allows the final
+  // URL used to upload the object to be the origin that is passed in.
+  // The suffix on the end is important as it will allow us to route
+  // traffic to S3 via lambda at edge instead of going to our API.
+  const url = new URL(endpointSuffix, apiOrigin)
+  const [bucket, ...domainParts] = url.hostname.split('.')
+  url.hostname = domainParts.join('.')
 
   const s3Client = new S3Client({
-    // The suffix on the end is important as it will allow us to route
-    // traffic to S3 via lambda at edge instead of going to our API
-    endpoint: `${apiOrigin}${endpointSuffix}`,
+    endpoint: url.href,
     region: region,
-    requestHandler,
-    // Have to put something here otherwise the SDK throws errors.
-    // Might be able to remove the validation from the middleware somehow?
-    credentials: {
-      accessKeyId: 'AWS_ACCESS_KEY_ID',
-      secretAccessKey: 'AWS_SECRET_ACCESS_KEY',
-    },
     maxAttempts: RETRY_ATTEMPTS,
+    requestHandler: oneBlinkRequestHandler,
+    // Sign requests with our own Authorization header instead
+    // of letting AWS SDK attempt to generate credentials
+    signer: {
+      sign: async (request) => {
+        const token = await getBearerToken()
+        if (token) {
+          request.headers['authorization'] = 'Bearer ' + token
+        }
+
+        return request
+      },
+    },
   })
 
   if (isPublic) {
-    if (!tags) {
-      tags = new URLSearchParams()
-    }
-    tags?.append('public-read', 'yes')
+    tags.append('public-read', 'yes')
   }
 
   const managedUpload = new Upload({
     client: s3Client,
     partSize: 5 * 1024 * 1024,
-    queueSize: requestHandler.determineQueueSize(),
+    queueSize: oneBlinkHttpHandler.determineQueueSize(),
     //Related github issue: https://github.com/aws/aws-sdk-js-v3/issues/2311
     //This is a variable that is set to false by default, setting it to true
     //means that it will force the upload to fail when one part fails on
     //an upload. The S3 client has built in retry logic to retry uploads by default
     leavePartsOnError: true,
     params: {
-      // Bucket needs to have something to avoid client side errors
-      // Also needs to have a `.` in it to prevent SDK from using the
-      // new S3 bucket domain concept with includes the bucket in the
-      // domain instead of the path. We need it in the path to use the
-      // API as the domain.
-      Bucket: apiOrigin.split('.').slice(-2).join('.'),
+      Bucket: bucket,
       Key: key,
       Body: body,
       ContentType: contentType,
@@ -92,12 +100,11 @@ async function uploadToS3<T>({
       Expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)), // Max 1 year
       CacheControl: 'max-age=31536000', // Max 1 year(365 days),
       ACL: 'bucket-owner-full-control',
-      Tagging: tags?.toString(),
+      Tagging: tags.toString(),
     },
   })
 
   managedUpload.on('httpUploadProgress', (progress) => {
-    console.log('S3 upload progress for key', key, progress)
     if (onProgress && progress.total) {
       const percent = determineUploadProgressAsPercentage({
         ...progress,
@@ -114,21 +121,24 @@ async function uploadToS3<T>({
   try {
     await managedUpload.done()
   } catch (error) {
-    if (requestHandler.failResponse) {
-      throw new OneBlinkStorageError(requestHandler.failResponse.message, {
-        httpStatusCode: requestHandler.failResponse.statusCode,
-        originalError: error instanceof Error ? error : undefined,
-      })
+    if (oneBlinkRequestHandler.failResponse) {
+      throw new OneBlinkStorageError(
+        oneBlinkRequestHandler.failResponse.message,
+        {
+          httpStatusCode: oneBlinkRequestHandler.failResponse.statusCode,
+          originalError: error instanceof Error ? error : undefined,
+        },
+      )
     }
     throw error
   }
 
-  if (!requestHandler.oneblinkResponse) {
+  if (!oneBlinkRequestHandler.oneblinkResponse) {
     throw new Error(
       'No response from server. Something went wrong in "@oneblink/uploads".',
     )
   }
-  return requestHandler.oneblinkResponse
+  return oneBlinkRequestHandler.oneblinkResponse
 }
 
 export default uploadToS3
