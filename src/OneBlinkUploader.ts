@@ -431,7 +431,7 @@ export default class OneBlinkUploader {
     abortSignal,
     data,
     contentType,
-    fileName,
+    filename,
   }: UploadOptions & UploadEmailAttachmentOptions) {
     return await uploadToS3({
       ...this,
@@ -441,7 +441,7 @@ export default class OneBlinkUploader {
       abortSignal,
       onProgress,
       requestBodyHeader: {
-        fileName,
+        filename,
       },
       isPublic: false,
     })

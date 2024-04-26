@@ -49,11 +49,14 @@ export type UploadFormSubmissionOptions = UploadOptions & {
   jobId?: string
 }
 
-export type UploadAssetOptions = UploadOptions & {
+export type UploadAssetBase = {
   /** The file data to upload */
   data: AttachmentUploadData
   /** A standard MIME type describing the format of the contents */
   contentType: string
+}
+
+export type UploadAssetOptions = UploadAssetBase & {
   /** The name of the file being uploaded */
   fileName: string
 }
@@ -65,4 +68,7 @@ export type UploadPDFConversionOptions = UploadOptions & {
   formId: number
 }
 
-export type UploadEmailAttachmentOptions = UploadAssetOptions
+export type UploadEmailAttachmentOptions = UploadAssetBase & {
+  /** The name of the file being uploaded */
+  filename: string
+}
