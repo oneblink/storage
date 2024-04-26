@@ -1,5 +1,6 @@
-import { StorageConstructorOptions } from '../types'
 import { AWSTypes } from '@oneblink/types'
+import { HttpRequest, HttpResponse } from '@smithy/protocol-http'
+import { HttpHandlerOptions } from '@smithy/types'
 
 export type RequestBodyHeader = Record<string, unknown>
 
@@ -11,13 +12,13 @@ export type FailResponse = {
   message: string
 }
 
-export interface IOneBlinkRequestHandler<T> {
-  getIdToken: StorageConstructorOptions['getIdToken']
-  requestBodyHeader?: RequestBodyHeader
-  oneblinkResponse?: OneBlinkResponse<T>
-  failResponse?: {
-    statusCode: number
-    message: string
-  }
+export interface IOneBlinkHttpHandler {
+  handleRequest: (
+    request: HttpRequest,
+    options?: HttpHandlerOptions,
+  ) => Promise<HttpResponse>
+  handleFailResponse: (
+    response: HttpResponse,
+  ) => Promise<FailResponse | undefined>
   determineQueueSize: () => number
 }

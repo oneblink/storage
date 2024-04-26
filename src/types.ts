@@ -11,11 +11,11 @@ export type StorageConstructorOptions = {
   /** The AWS region to upload the submission to */
   region: string
   /**
-   * A function that returns a promise resolving to an access token. If the
-   * promise resolves to a truthy value, the `x-oneblink-authorization` header
-   * will be set with the value.
+   * A function that returns a promise resolving to a Bearer token. If the
+   * promise resolves to a truthy value, the `authorization` header will be set
+   * with the value.
    */
-  getIdToken: () => Promise<string | undefined>
+  getBearerToken: () => Promise<string | undefined>
 }
 
 export type UploadOptions = {

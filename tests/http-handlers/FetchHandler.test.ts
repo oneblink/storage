@@ -1,9 +1,7 @@
 import { OneBlinkFetchHandler } from '../../src/http-handlers/FetchHandler'
 
 describe('determineQueueSize', () => {
-  const oneBlinkFetchHandler = new OneBlinkFetchHandler({
-    getIdToken: async () => undefined,
-  })
+  const oneBlinkFetchHandler = new OneBlinkFetchHandler()
   const determineQueueSize = oneBlinkFetchHandler.determineQueueSize
 
   it('should return 1 when no connection', () => {

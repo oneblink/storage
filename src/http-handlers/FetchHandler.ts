@@ -1,72 +1,33 @@
-import { FetchHttpHandler } from '@smithy/fetch-http-handler'
-import { HttpRequest } from '@smithy/protocol-http'
+import { HttpRequest, HttpResponse } from '@smithy/protocol-http'
 import { HttpHandlerOptions } from '@smithy/types'
-import { StorageConstructorOptions } from '../types'
-import {
-  RequestBodyHeader,
-  IOneBlinkRequestHandler,
-  OneBlinkResponse,
-  FailResponse,
-} from './types'
-import { handleResponse, prepareRequest } from './handleRequest'
+import { IOneBlinkHttpHandler } from './types'
 
-// Our own custom request handler to allow setting customer headers for
-// authentication. Also allow the response header which includes dynamic
-// data from the lambda at edge to be retrieved and held for later when
-// the upload has completed.
-export class OneBlinkFetchHandler<T>
-  extends FetchHttpHandler
-  implements IOneBlinkRequestHandler<T>
-{
-  constructor({
-    getIdToken,
-    requestBodyHeader,
-  }: {
-    getIdToken: StorageConstructorOptions['getIdToken']
-    requestBodyHeader?: RequestBodyHeader
-  }) {
-    super()
-    this.getIdToken = getIdToken
-    this.requestBodyHeader = requestBodyHeader
+export class OneBlinkFetchHandler implements IOneBlinkHttpHandler {
+  async handleRequest(request: HttpRequest, options?: HttpHandlerOptions) {
+    const { FetchHttpHandler } = await import('@smithy/fetch-http-handler')
+    const fetchHttpHandler = new FetchHttpHandler()
+    const { response } = await fetchHttpHandler.handle(request, options)
+    return response
   }
 
-  getIdToken: StorageConstructorOptions['getIdToken']
-  requestBodyHeader?: RequestBodyHeader
-  oneblinkResponse?: OneBlinkResponse<T>
-  failResponse?: FailResponse
+  async handleFailResponse(response: HttpResponse) {
+    const fetchResponse = new Response(response.body)
 
-  async handle(request: HttpRequest, options?: HttpHandlerOptions) {
-    await prepareRequest(this, request)
-
-    const result = await super.handle(request, options)
-
-    await handleResponse(this, request, result.response)
-
-    if (result.response.statusCode < 400) {
-      return result
-    }
-
-    const fetchResponse = new Response(result.response.body)
-
-    switch (result.response.headers['content-type']) {
+    switch (response.headers['content-type']) {
       case 'application/json; charset=utf-8':
       case 'application/json': {
-        this.failResponse = {
-          statusCode: result.response.statusCode,
+        return {
+          statusCode: response.statusCode,
           message: (await fetchResponse.json()).message,
         }
-        break
       }
       default: {
-        this.failResponse = {
-          statusCode: result.response.statusCode,
+        return {
+          statusCode: response.statusCode,
           message: await fetchResponse.text(),
         }
-        break
       }
     }
-
-    return result
   }
 
   determineQueueSize() {

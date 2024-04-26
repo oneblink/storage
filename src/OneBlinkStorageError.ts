@@ -23,7 +23,7 @@ export default class OneBlinkStorageError extends Error {
     super(message)
     this.name = 'OneBlinkStorageError'
 
-    this.originalError = options.originalError
     this.httpStatusCode = options.httpStatusCode
+    this.originalError = options.originalError
   }
 }

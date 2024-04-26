@@ -17,7 +17,7 @@ import generateFormSubmissionTags from './generateFormSubmissionTags'
 export default class OneBlinkUploader {
   apiOrigin: StorageConstructorOptions['apiOrigin']
   region: StorageConstructorOptions['region']
-  getIdToken: StorageConstructorOptions['getIdToken']
+  getBearerToken: StorageConstructorOptions['getBearerToken']
 
   /**
    * #### Example
@@ -28,14 +28,14 @@ export default class OneBlinkUploader {
    * const uploader = new OneBlinkUploader({
    *   apiOrigin: 'https://auth-api.blinkm.io',
    *   region: 'ap-southeast-2',
-   *   getIdToken: () => getAccessToken(),
+   *   getBearerToken: () => getAccessToken(),
    * })
    * ```
    */
   constructor(props: StorageConstructorOptions) {
     this.apiOrigin = props.apiOrigin
     this.region = props.region
-    this.getIdToken = props.getIdToken
+    this.getBearerToken = props.getBearerToken
   }
 
   /**
