@@ -227,7 +227,6 @@ export default class OneBlinkUploader {
     formsAppId,
     externalId,
     lastElementUpdated,
-    submissionTimestamp,
     onProgress,
     abortSignal,
   }: UploadFormSubmissionOptions & {
@@ -247,7 +246,7 @@ export default class OneBlinkUploader {
         lastElementUpdated,
         externalId,
         device,
-        submissionTimestamp,
+        submissionTimestamp: new Date().toISOString(),
       }),
       key: `forms/${definition.id}/drafts`,
       tags: generateFormSubmissionTags({

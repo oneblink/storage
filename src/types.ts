@@ -47,8 +47,6 @@ export type UploadFormSubmissionOptions = UploadOptions & {
   previousFormSubmissionApprovalId?: string
   /** The identifier of the job that will be marked as submitted */
   jobId?: string
-  /** The iso string from when the submission took place */
-  submissionTimestamp?: string
 }
 
 export type UploadAssetOptions = UploadOptions & {
