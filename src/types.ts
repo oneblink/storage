@@ -36,7 +36,7 @@ export type UploadFormSubmissionOptions = UploadOptions & {
   device?: SubmissionTypes.NewS3SubmissionData['device']
   /** The identifier for the forms app that is being submitted from */
   formsAppId: number
-  /** An encrypted token that repraesents the user */
+  /** An encrypted token that represents the user */
   userToken?: string
   /** The external identifier that represents the submission */
   externalId?: string
@@ -47,6 +47,8 @@ export type UploadFormSubmissionOptions = UploadOptions & {
   previousFormSubmissionApprovalId?: string
   /** The identifier of the job that will be marked as submitted */
   jobId?: string
+  /** The iso string from when the submission took place */
+  submissionTimestamp?: string
 }
 
 export type UploadAssetOptions = UploadOptions & {
