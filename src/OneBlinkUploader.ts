@@ -246,6 +246,7 @@ export default class OneBlinkUploader {
         lastElementUpdated,
         externalId,
         device,
+        submissionTimestamp: new Date().toISOString(),
       }),
       key: `forms/${definition.id}/drafts`,
       tags: generateFormSubmissionTags({
