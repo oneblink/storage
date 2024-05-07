@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- `OneBlinkUploaded.prototype.uploadFormSubmissionDraft()`
+
+### Removed
+
+- **[BREAKING]** `OneBlinkUploaded.prototype.uploadDraftSubmission()` replaced with `uploadFormSubmissionDraft()` which allows for creating and updating drafts
+
 ## [1.0.0] - 2024-05-01
 
 Initial release

@@ -73,24 +73,18 @@ export default class OneBlinkUploader {
     taskId,
     taskActionId,
     taskGroupInstanceId,
-    recaptchas,
+    draftId,
+    recaptchas = [],
     onProgress,
     abortSignal,
   }: UploadFormSubmissionOptions & {
-    /** The identifier of the task that will be marked as completed */
-    taskId?: string
-    /** The identifier of the task action that was used to complete the task */
-    taskActionId?: string
-    /**
-     * The identifier of the task group instance that the completed task is
-     * associated with
-     */
-    taskGroupInstanceId?: string
     /** The reCAPTCHA tokens to validate the submission */
     recaptchas?: {
       /** A reCAPTCHA token */
       token: string
     }[]
+    /** The identifier of the draft to mark as submitted. */
+    draftId?: string
   }) {
     const newS3SubmissionData: SubmissionTypes.NewS3SubmissionData = {
       submission,
@@ -122,9 +116,10 @@ export default class OneBlinkUploader {
         taskId,
         taskActionId,
         taskGroupInstanceId,
-        recaptchas: recaptchas || [],
         jobId,
         previousFormSubmissionApprovalId,
+        recaptchas,
+        draftId,
       },
     })
   }
@@ -217,7 +212,7 @@ export default class OneBlinkUploader {
    * @param data The submission upload data and options
    * @returns The upload result
    */
-  async uploadDraftSubmission({
+  async uploadFormSubmissionDraft({
     submission,
     definition,
     device,
@@ -226,36 +221,68 @@ export default class OneBlinkUploader {
     jobId,
     formsAppId,
     externalId,
+    taskId,
+    taskActionId,
+    taskGroupInstanceId,
+    draftId,
+    createdAt,
+    title,
     lastElementUpdated,
     onProgress,
     abortSignal,
   }: UploadFormSubmissionOptions & {
+    /**
+     * The identifier of the draft that a new version should be created for. Set
+     * to `undefined` to create a new draft.
+     */
+    draftId?: string
+    /**
+     * The date and time (in ISO format) when the draft data was saved by a
+     * user.
+     */
+    createdAt: string
+    /** The title input by a user to identify the draft. */
+    title: string
     /** The identifier for the last element that was used before saving draft */
     lastElementUpdated?: SubmissionTypes.NewS3SubmissionData['lastElementUpdated']
   }) {
-    return await uploadToS3<{
-      submissionTimestamp: string
-      draftDataId: string
-    }>({
+    const newS3SubmissionData: SubmissionTypes.NewS3SubmissionData = {
+      submission,
+      definition,
+      device,
+      lastElementUpdated,
+    }
+    const tags = generateFormSubmissionTags({
+      userToken,
+      previousFormSubmissionApprovalId,
+      jobId,
+    })
+
+    let key = 'form-submission-drafts'
+    if (draftId) {
+      key += `/${draftId}`
+    }
+
+    return await uploadToS3<SubmissionTypes.FormSubmissionDraft>({
       ...this,
       contentType: 'application/json',
-      body: JSON.stringify({
-        definition,
-        submission,
-        formsAppId,
-        lastElementUpdated,
-        externalId,
-        device,
-        submissionTimestamp: new Date().toISOString(),
-      }),
-      key: `forms/${definition.id}/drafts`,
-      tags: generateFormSubmissionTags({
-        userToken,
-        jobId,
-        previousFormSubmissionApprovalId,
-      }),
+      body: JSON.stringify(newS3SubmissionData),
+      key,
+      tags,
       abortSignal,
       onProgress,
+      requestBodyHeader: {
+        formsAppId,
+        formId: definition.id,
+        externalId,
+        taskId,
+        taskActionId,
+        taskGroupInstanceId,
+        jobId,
+        previousFormSubmissionApprovalId,
+        createdAt,
+        title,
+      },
     })
   }
 
