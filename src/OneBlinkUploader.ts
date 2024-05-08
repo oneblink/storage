@@ -73,7 +73,7 @@ export default class OneBlinkUploader {
     taskId,
     taskActionId,
     taskGroupInstanceId,
-    draftId,
+    formSubmissionDraftId,
     recaptchas = [],
     onProgress,
     abortSignal,
@@ -84,7 +84,7 @@ export default class OneBlinkUploader {
       token: string
     }[]
     /** The identifier of the draft to mark as submitted. */
-    draftId?: string
+    formSubmissionDraftId?: string
   }) {
     const newS3SubmissionData: SubmissionTypes.NewS3SubmissionData = {
       submission,
@@ -119,7 +119,7 @@ export default class OneBlinkUploader {
         jobId,
         previousFormSubmissionApprovalId,
         recaptchas,
-        draftId,
+        formSubmissionDraftId,
       },
     })
   }
@@ -224,10 +224,11 @@ export default class OneBlinkUploader {
     taskId,
     taskActionId,
     taskGroupInstanceId,
-    draftId,
+    formSubmissionDraftId,
     createdAt,
     title,
     lastElementUpdated,
+    localKey,
     onProgress,
     abortSignal,
   }: UploadFormSubmissionOptions & {
@@ -235,7 +236,9 @@ export default class OneBlinkUploader {
      * The identifier of the draft that a new version should be created for. Set
      * to `undefined` to create a new draft.
      */
-    draftId?: string
+    formSubmissionDraftId?: string
+    /** The identifier used to store the draft locally for offline capability */
+    localKey: string
     /**
      * The date and time (in ISO format) when the draft data was saved by a
      * user.
@@ -259,11 +262,11 @@ export default class OneBlinkUploader {
     })
 
     let key = 'form-submission-drafts'
-    if (draftId) {
-      key += `/${draftId}`
+    if (formSubmissionDraftId) {
+      key += `/${formSubmissionDraftId}`
     }
 
-    return await uploadToS3<SubmissionTypes.FormSubmissionDraft>({
+    return await uploadToS3<SubmissionTypes.FormSubmissionDraftVersion>({
       ...this,
       contentType: 'application/json',
       body: JSON.stringify(newS3SubmissionData),
@@ -280,6 +283,7 @@ export default class OneBlinkUploader {
         taskGroupInstanceId,
         jobId,
         previousFormSubmissionApprovalId,
+        localKey,
         createdAt,
         title,
       },
