@@ -228,17 +228,11 @@ export default class OneBlinkUploader {
     createdAt,
     title,
     lastElementUpdated,
-    localKey,
     onProgress,
     abortSignal,
   }: UploadFormSubmissionOptions & {
-    /**
-     * The identifier of the draft that a new version should be created for. Set
-     * to `undefined` to create a new draft.
-     */
-    formSubmissionDraftId?: string
-    /** The identifier used to store the draft locally for offline capability */
-    localKey: string
+    /** The identifier of the draft that a new version should be created for. */
+    formSubmissionDraftId: string
     /**
      * The date and time (in ISO format) when the draft data was saved by a
      * user.
@@ -261,16 +255,13 @@ export default class OneBlinkUploader {
       jobId,
     })
 
-    let key = 'form-submission-drafts'
-    if (formSubmissionDraftId) {
-      key += `/${formSubmissionDraftId}`
-    }
+    tags.append('formSubmissionDraftId', formSubmissionDraftId)
 
     return await uploadToS3<SubmissionTypes.FormSubmissionDraftVersion>({
       ...this,
       contentType: 'application/json',
       body: JSON.stringify(newS3SubmissionData),
-      key,
+      key: 'form-submission-draft-versions',
       tags,
       abortSignal,
       onProgress,
@@ -283,9 +274,9 @@ export default class OneBlinkUploader {
         taskGroupInstanceId,
         jobId,
         previousFormSubmissionApprovalId,
-        localKey,
         createdAt,
         title,
+        formSubmissionDraftId,
       },
     })
   }
