@@ -203,6 +203,9 @@ export default class OneBlinkUploader {
    *     // ...
    *   },
    *   formsAppId: 1,
+   *   formSubmissionDraftId: '',
+   *   createdAt: new Date().toISOString(),
+   *   title: '',
    *   onProgress: (progress) => {
    *     // ...
    *   },
