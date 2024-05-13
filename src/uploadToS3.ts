@@ -86,20 +86,16 @@ async function uploadToS3<T>({
     client: s3Client,
     partSize: 5 * 1024 * 1024,
     queueSize: oneBlinkHttpHandler.determineQueueSize(),
-    //Related github issue: https://github.com/aws/aws-sdk-js-v3/issues/2311
-    //This is a variable that is set to false by default, setting it to true
-    //means that it will force the upload to fail when one part fails on
-    //an upload. The S3 client has built in retry logic to retry uploads by default
+    // Related github issue: https://github.com/aws/aws-sdk-js-v3/issues/2311
+    // This is a variable that is set to false by default, setting it to true
+    // means that it will force the upload to fail when one part fails on
+    // an upload. The S3 client has built in retry logic to retry uploads by default
     leavePartsOnError: true,
     params: {
       Bucket: bucket,
       Key: key,
       Body: body,
       ContentType: contentType,
-      ServerSideEncryption: 'AES256',
-      Expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)), // Max 1 year
-      CacheControl: 'max-age=31536000', // Max 1 year(365 days),
-      ACL: 'bucket-owner-full-control',
       Tagging: tags.toString(),
     },
   })

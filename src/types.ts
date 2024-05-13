@@ -47,6 +47,15 @@ export type UploadFormSubmissionOptions = UploadOptions & {
   previousFormSubmissionApprovalId?: string
   /** The identifier of the job that will be marked as submitted */
   jobId?: string
+  /** The identifier of the task that will be marked as completed */
+  taskId?: string
+  /** The identifier of the task action that was used to complete the task */
+  taskActionId?: string
+  /**
+   * The identifier of the task group instance that the completed task is
+   * associated with
+   */
+  taskGroupInstanceId?: string
 }
 
 export type UploadAssetOptions = UploadOptions & {
