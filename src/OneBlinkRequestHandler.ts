@@ -40,9 +40,9 @@ export class OneBlinkRequestHandler<T>
     }
 
     const requestUrl = `${request.method} ${request.protocol}//${request.hostname}${request.path}?${new URLSearchParams(request.query as Record<string, string>).toString()}`
-    console.log('Starting S3 upload request', requestUrl)
+    console.log('Starting storage upload request', requestUrl)
     const response = await this.oneBlinkHttpHandler.handleRequest(request)
-    console.log('Finished S3 upload request', requestUrl)
+    console.log('Finished storage upload request', requestUrl)
 
     const oneblinkResponse = response.headers['x-oneblink-response']
     if (typeof oneblinkResponse === 'string') {
