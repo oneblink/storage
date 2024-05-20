@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.0.0] - 2024-05-20
+
 ### Added
 
 - `OneBlinkUploaded.prototype.uploadFormSubmissionDraft()`
@@ -14,6 +16,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Removed
 
 - **[BREAKING]** `OneBlinkUploaded.prototype.uploadDraftSubmission()` replaced with `uploadFormSubmissionDraft()` which allows for creating and updating drafts
+
+### Dependencies
+
+- update [@aws-sdk/client-s3](https://www.npmjs.com/package/@aws-sdk/client-s3) to [3.569.0](https://github.com/aws/aws-sdk-js-v3/blob/master/CHANGELOG.md) (from [3.554.0](https://github.com/aws/aws-sdk-js-v3/blob/master/CHANGELOG.md))
+
+- update [@aws-sdk/lib-storage](https://www.npmjs.com/package/@aws-sdk/lib-storage) to [3.569.0](https://github.com/aws/aws-sdk-js-v3/blob/master/CHANGELOG.md) (from [3.554.0](https://github.com/aws/aws-sdk-js-v3/blob/master/CHANGELOG.md))
 
 ## [1.0.0] - 2024-05-01
 
