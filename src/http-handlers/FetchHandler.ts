@@ -1,6 +1,7 @@
 import { HttpRequest, HttpResponse } from '@smithy/protocol-http'
 import { HttpHandlerOptions } from '@smithy/types'
 import { IOneBlinkHttpHandler } from './types'
+import { GetObjectCommandOutput } from '@aws-sdk/client-s3'
 
 export class OneBlinkFetchHandler implements IOneBlinkHttpHandler {
   async handleRequest(request: HttpRequest, options?: HttpHandlerOptions) {
@@ -30,7 +31,19 @@ export class OneBlinkFetchHandler implements IOneBlinkHttpHandler {
     }
   }
 
-  determineQueueSize() {
+  async parseGetObjectCommandOutputAsJson<T>(
+    getObjectCommandOutput: GetObjectCommandOutput,
+  ): Promise<T | undefined> {
+    if (
+      getObjectCommandOutput.Body instanceof Blob ||
+      (window.ReadableStream &&
+        getObjectCommandOutput.Body instanceof window.ReadableStream)
+    ) {
+      return (await new Response(getObjectCommandOutput.Body).json()) as T
+    }
+  }
+
+  determineUploadQueueSize() {
     const effectiveType =
       window.navigator &&
       'connection' in window.navigator &&

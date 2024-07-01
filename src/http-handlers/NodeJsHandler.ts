@@ -1,6 +1,7 @@
 import { HttpRequest, HttpResponse } from '@smithy/protocol-http'
 import { HttpHandlerOptions } from '@smithy/types'
 import { IOneBlinkHttpHandler, FailResponse } from './types'
+import { GetObjectCommandOutput } from '@aws-sdk/client-s3'
 
 export class OneBlinkNodeJsHandler implements IOneBlinkHttpHandler {
   async handleRequest(
@@ -35,9 +36,10 @@ export class OneBlinkNodeJsHandler implements IOneBlinkHttpHandler {
         }
         break
       }
-      case 'text/html': {
-        const { Readable, consumers } = await import('stream')
+      default: {
+        const { Readable } = await import('stream')
         if (response.body instanceof Readable) {
+          const consumers = await import('stream/consumers')
           return {
             statusCode: response.statusCode,
             message: await consumers.text(response.body),
@@ -55,7 +57,17 @@ export class OneBlinkNodeJsHandler implements IOneBlinkHttpHandler {
     }
   }
 
-  determineQueueSize() {
+  async parseGetObjectCommandOutputAsJson<T>(
+    getObjectCommandOutput: GetObjectCommandOutput,
+  ): Promise<T | undefined> {
+    const { Readable } = await import('stream')
+    if (getObjectCommandOutput.Body instanceof Readable) {
+      const consumers = await import('stream/consumers')
+      return (await consumers.json(getObjectCommandOutput.Body)) as T
+    }
+  }
+
+  determineUploadQueueSize() {
     return 10
   }
 }

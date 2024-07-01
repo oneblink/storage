@@ -2,7 +2,7 @@ import { OneBlinkFetchHandler } from '../../src/http-handlers/FetchHandler'
 
 describe('determineQueueSize', () => {
   const oneBlinkFetchHandler = new OneBlinkFetchHandler()
-  const determineQueueSize = oneBlinkFetchHandler.determineQueueSize
+  const determineQueueSize = oneBlinkFetchHandler.determineUploadQueueSize
 
   it('should return 1 when no connection', () => {
     Object.defineProperty(global.window, 'navigator', {
