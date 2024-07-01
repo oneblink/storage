@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- `OneBlinkDownloader` to download form submissions, drafts and pre-fill data
+
 ## [2.0.1] - 2024-07-01
 
 ## [2.0.0] - 2024-05-20

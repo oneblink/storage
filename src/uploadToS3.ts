@@ -1,14 +1,8 @@
-import { PutObjectCommandInput, S3Client } from '@aws-sdk/client-s3'
+import { PutObjectCommandInput } from '@aws-sdk/client-s3'
 import { Upload, Progress } from '@aws-sdk/lib-storage'
 import { StorageConstructorOptions, UploadOptions } from './types'
-import OneBlinkStorageError from './OneBlinkStorageError'
 import { RequestBodyHeader } from './http-handlers/types'
-import { getOneBlinkHttpHandler } from './http-handlers'
-import { OneBlinkRequestHandler } from './OneBlinkRequestHandler'
-
-const RETRY_ATTEMPTS = 3
-
-const endpointSuffix = '/storage'
+import { generateS3Client } from './generateS3Client'
 
 /** The properties to be passed to the uploadToS3 function */
 interface UploadToS3Props extends UploadOptions, StorageConstructorOptions {
@@ -30,53 +24,18 @@ interface UploadToS3Props extends UploadOptions, StorageConstructorOptions {
 }
 
 async function uploadToS3<T>({
-  region,
-  apiOrigin,
   key,
   body,
-  requestBodyHeader,
   tags = new URLSearchParams(),
-  getBearerToken,
   onProgress,
   abortSignal,
   contentType,
   isPublic,
+  ...storageConstructorOptions
 }: UploadToS3Props) {
-  const oneBlinkHttpHandler = getOneBlinkHttpHandler()
-  const oneBlinkRequestHandler = new OneBlinkRequestHandler<T>(
-    oneBlinkHttpHandler,
-    requestBodyHeader,
+  const { s3Client, bucket, oneBlinkRequestHandler } = generateS3Client<T>(
+    storageConstructorOptions,
   )
-
-  // The endpoint we use instead of the the AWS S3 endpoint is
-  // formatted internally by the AWS S3 SDK. It will add the Bucket
-  // parameter below as the subdomain to the URL (as long as the
-  // bucket does not contain a `.`). The logic below allows the final
-  // URL used to upload the object to be the origin that is passed in.
-  // The suffix on the end is important as it will allow us to route
-  // traffic to S3 via lambda at edge instead of going to our API.
-  const url = new URL(endpointSuffix, apiOrigin)
-  const [bucket, ...domainParts] = url.hostname.split('.')
-  url.hostname = domainParts.join('.')
-
-  const s3Client = new S3Client({
-    endpoint: url.href,
-    region: region,
-    maxAttempts: RETRY_ATTEMPTS,
-    requestHandler: oneBlinkRequestHandler,
-    // Sign requests with our own Authorization header instead
-    // of letting AWS SDK attempt to generate credentials
-    signer: {
-      sign: async (request) => {
-        const token = await getBearerToken()
-        if (token) {
-          request.headers['authorization'] = 'Bearer ' + token
-        }
-
-        return request
-      },
-    },
-  })
 
   if (isPublic) {
     tags.append('public-read', 'yes')
@@ -85,7 +44,8 @@ async function uploadToS3<T>({
   const managedUpload = new Upload({
     client: s3Client,
     partSize: 5 * 1024 * 1024,
-    queueSize: oneBlinkHttpHandler.determineQueueSize(),
+    queueSize:
+      oneBlinkRequestHandler.oneBlinkHttpHandler.determineUploadQueueSize(),
     // Related github issue: https://github.com/aws/aws-sdk-js-v3/issues/2311
     // This is a variable that is set to false by default, setting it to true
     // means that it will force the upload to fail when one part fails on
@@ -114,24 +74,13 @@ async function uploadToS3<T>({
     managedUpload.abort()
   })
 
-  try {
-    await managedUpload.done()
-  } catch (error) {
-    if (oneBlinkRequestHandler.failResponse) {
-      throw new OneBlinkStorageError(
-        oneBlinkRequestHandler.failResponse.message,
-        {
-          httpStatusCode: oneBlinkRequestHandler.failResponse.statusCode,
-          originalError: error instanceof Error ? error : undefined,
-        },
-      )
-    }
-    throw error
-  }
+  await oneBlinkRequestHandler.sendS3Command(
+    async () => await managedUpload.done(),
+  )
 
   if (!oneBlinkRequestHandler.oneblinkResponse) {
     throw new Error(
-      'No response from server. Something went wrong in "@oneblink/uploads".',
+      'No response from server. Something went wrong in "@oneblink/storage".',
     )
   }
   return oneBlinkRequestHandler.oneblinkResponse

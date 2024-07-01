@@ -1,3 +1,4 @@
+import { GetObjectCommandOutput } from '@aws-sdk/client-s3'
 import { AWSTypes } from '@oneblink/types'
 import { HttpRequest, HttpResponse } from '@smithy/protocol-http'
 import { HttpHandlerOptions } from '@smithy/types'
@@ -17,8 +18,11 @@ export interface IOneBlinkHttpHandler {
     request: HttpRequest,
     options?: HttpHandlerOptions,
   ) => Promise<HttpResponse>
+  parseGetObjectCommandOutputAsJson: <T>(
+    getObjectCommandOutput: GetObjectCommandOutput,
+  ) => Promise<T | undefined>
   handleFailResponse: (
     response: HttpResponse,
   ) => Promise<FailResponse | undefined>
-  determineQueueSize: () => number
+  determineUploadQueueSize: () => number
 }

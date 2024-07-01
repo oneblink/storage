@@ -18,11 +18,14 @@ export type StorageConstructorOptions = {
   getBearerToken: () => Promise<string | undefined>
 }
 
-export type UploadOptions = {
-  /** An optional progress listener for tracking the progress of the upload */
-  onProgress?: ProgressListener
+export type DownloadOptions = {
   /** An optional AbortSignal that can be used to abort the upload */
   abortSignal?: AbortSignal
+}
+
+export type UploadOptions = DownloadOptions & {
+  /** An optional progress listener for tracking the progress of the upload */
+  onProgress?: ProgressListener
 }
 
 export type AttachmentUploadData = NonNullable<PutObjectCommandInput['Body']>
