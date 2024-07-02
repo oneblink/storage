@@ -80,17 +80,14 @@ export default class OneBlinkDownloader {
    */
   async downloadDraftSubmission({
     formSubmissionDraftVersionId,
-    formId,
     abortSignal,
   }: DownloadOptions & {
     /** The identifier of the draft form submission version. */
     formSubmissionDraftVersionId: string
-    /** The identifier of the form associated with the draft submission. */
-    formId: number
   }) {
     return await downloadJsonFromS3<SubmissionTypes.S3SubmissionData>({
       ...this,
-      key: `forms/${formId}/drafts/${formSubmissionDraftVersionId}`,
+      key: `form-submission-draft-versions/${formSubmissionDraftVersionId}`,
       abortSignal,
     })
   }
