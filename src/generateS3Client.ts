@@ -1,4 +1,5 @@
 import { S3Client } from '@aws-sdk/client-s3'
+import { AwsCredentialIdentity } from '@smithy/types'
 import { StorageConstructorOptions } from './types'
 import { getOneBlinkHttpHandler } from './http-handlers'
 import { OneBlinkRequestHandler } from './OneBlinkRequestHandler'
@@ -40,6 +41,7 @@ export function generateS3Client<T>({
       region,
       maxAttempts: RETRY_ATTEMPTS,
       requestHandler: oneBlinkRequestHandler,
+      credentials: {} as AwsCredentialIdentity,
       // Sign requests with our own Authorization header instead
       // of letting AWS SDK attempt to generate credentials
       signer: {
