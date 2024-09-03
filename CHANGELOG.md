@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.1.1] - 2024-09-03
+
+### Dependencies
+
+- update [@aws-sdk/client-s3](https://www.npmjs.com/package/@aws-sdk/client-s3) to [3.637.0](https://github.com/aws/aws-sdk-js-v3/releases/tag/v3.637.0) (from [3.569.0](https://github.com/aws/aws-sdk-js-v3/releases/tag/v3.569.0))
+
+- update [@aws-sdk/lib-storage](https://www.npmjs.com/package/@aws-sdk/lib-storage) to [3.637.0](https://github.com/aws/aws-sdk-js-v3/releases/tag/v3.637.0) (from [3.569.0](https://github.com/aws/aws-sdk-js-v3/releases/tag/v3.569.0))
+
 ## [2.1.0] - 2024-07-10
 
 ### Added
