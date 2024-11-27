@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- Value of request header `x-oneblink-request-body` not being encoded
+
 ## [2.1.1] - 2024-09-03
 
 ### Dependencies

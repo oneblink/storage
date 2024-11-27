@@ -31,8 +31,8 @@ export class OneBlinkRequestHandler<T>
 
   async handle(request: HttpRequest) {
     if (this.requestBodyHeader) {
-      request.headers['x-oneblink-request-body'] = JSON.stringify(
-        this.requestBodyHeader,
+      request.headers['x-oneblink-request-body'] = encodeURIComponent(
+        JSON.stringify(this.requestBodyHeader),
       )
     }
 
