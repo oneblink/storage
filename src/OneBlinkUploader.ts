@@ -183,8 +183,8 @@ export default class OneBlinkUploader {
       isPublic: !isPrivate,
       contentDisposition: `attachment; filename*=UTF-8''${encodeURIComponent(fileName)}`,
       requestBodyHeader: {
-        username,
-        fileName,
+        username: username ? encodeURIComponent(username) : undefined,
+        fileName: encodeURIComponent(fileName),
       },
     })
   }
@@ -330,7 +330,7 @@ export default class OneBlinkUploader {
       abortSignal,
       onProgress,
       requestBodyHeader: {
-        fileName,
+        fileName: encodeURIComponent(fileName),
       },
       isPublic: true,
     })
@@ -377,7 +377,7 @@ export default class OneBlinkUploader {
       abortSignal,
       onProgress,
       requestBodyHeader: {
-        fileName,
+        fileName: encodeURIComponent(fileName),
       },
       isPublic: true,
     })
@@ -467,7 +467,7 @@ export default class OneBlinkUploader {
       abortSignal,
       onProgress,
       requestBodyHeader: {
-        filename: fileName,
+        fileName: encodeURIComponent(fileName),
       },
       isPublic: false,
     })
