@@ -467,7 +467,7 @@ export default class OneBlinkUploader {
       abortSignal,
       onProgress,
       requestBodyHeader: {
-        fileName: encodeURIComponent(fileName),
+        filename: encodeURIComponent(fileName),
       },
       isPublic: false,
     })
