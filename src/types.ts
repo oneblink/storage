@@ -38,7 +38,7 @@ export type UploadFormSubmissionOptions = UploadOptions & {
   /** The device the form is being submitted */
   device?: SubmissionTypes.NewS3SubmissionData['device']
   /** The identifier for the forms app that is being submitted from */
-  formsAppId: number
+  formsAppId?: number
   /** An encrypted token that represents the user */
   userToken?: string
   /** The external identifier that represents the submission */
