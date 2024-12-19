@@ -80,6 +80,8 @@ export default class OneBlinkUploader {
   }: UploadFormSubmissionOptions & {
     /** The reCAPTCHA tokens to validate the submission */
     recaptchas?: {
+      /** The site key that was used to generate the reCAPTCHA token */
+      siteKey: string
       /** A reCAPTCHA token */
       token: string
     }[]
