@@ -24,6 +24,7 @@ export default async function downloadJsonFromS3<T>({
             new GetObjectCommand({
               Bucket: bucket,
               Key: key,
+              ResponseCacheControl: 'no-cache',
             }),
             {
               abortSignal,

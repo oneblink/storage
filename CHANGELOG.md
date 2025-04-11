@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- `Cache-Control=no-cache` response header to S3 download requests
+
 ## [3.0.0] - 2025-01-12
 
 ### Added
