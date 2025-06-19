@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- `collapsedSectionIds` to `OneBlinkUploader.uploadFormSubmissionDraft()`
+
 ## [3.0.0] - 2025-01-12
 
 ### Added
