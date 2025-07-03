@@ -92,6 +92,7 @@ export default class OneBlinkUploader {
       submission,
       definition,
       device,
+      completionTimestamp: new Date().toISOString(),
     }
     const tags = generateFormSubmissionTags({
       userToken,
