@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - `completionTimestamp` to `OneBlinkUploader.uploadSubmission()`
 
+## [3.1.1] - 2025-07-04
+
+### Changed
+
+- `@aws-sdk/client-s3` & `@aws-sdk/lib-storage` to locked versions in `package.json`
+
 ## [3.1.0] - 2025-07-01
 
 ### Added
