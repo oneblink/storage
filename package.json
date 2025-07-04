@@ -1,7 +1,7 @@
 {
   "name": "@oneblink/storage",
   "description": "SDK for managing storage files in the OneBlink ecosystem",
-  "version": "3.1.1",
+  "version": "3.2.0-beta.3",
   "author": "OneBlink <developers@oneblink.io> (https://oneblink.io)",
   "bugs": {
     "url": "https://github.com/oneblink/storage/issues"
@@ -13,6 +13,7 @@
   },
   "devDependencies": {
     "@microsoft/eslint-plugin-sdl": "^0.2.2",
+    "@oneblink/release-cli": "^3.4.0-beta.1",
     "@oneblink/types": "github:oneblink/types",
     "@types/jest": "^29.5.12",
     "@typescript-eslint/eslint-plugin": "^7.8.0",
@@ -64,6 +65,6 @@
     "test": "jest",
     "types": "npm i -D github:oneblink/types",
     "typescript": "tsc --noEmit",
-    "update-dependents": "oneblink-release update-dependents"
+    "update-dependents": "oneblink-release update-dependents --force"
   }
 }

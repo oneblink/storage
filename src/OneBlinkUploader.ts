@@ -74,10 +74,16 @@ export default class OneBlinkUploader {
     taskActionId,
     taskGroupInstanceId,
     formSubmissionDraftId,
+    completionTimestamp,
     recaptchas = [],
     onProgress,
     abortSignal,
   }: UploadFormSubmissionOptions & {
+    /**
+     * The date and time (in ISO format) the form was completed I.e. when the
+     * user clicked the submit button
+     */
+    completionTimestamp?: string
     /** The reCAPTCHA tokens to validate the submission */
     recaptchas?: {
       /** The site key that was used to generate the reCAPTCHA token */
@@ -92,6 +98,7 @@ export default class OneBlinkUploader {
       submission,
       definition,
       device,
+      completionTimestamp,
     }
     const tags = generateFormSubmissionTags({
       userToken,
