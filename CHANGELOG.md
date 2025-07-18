@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - `OneBlinkUploaded.prototype.uploadVolunteersAsset()`
 
+### Removed
+
+- encoding of `username` and `fileName` values in `x-oneblink-request-body` header
+
 ## [3.2.0] - 2025-07-10
 
 ### Added
