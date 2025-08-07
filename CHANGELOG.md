@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- `attachmentsAccessToken` to `OneBlinkUploader.uploadSubmission()` return type
+
 ## [3.2.1] - 2025-07-25
 
 ### Added

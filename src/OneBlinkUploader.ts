@@ -110,6 +110,7 @@ export default class OneBlinkUploader {
       submissionTimestamp: string
       submissionId: string
       pdfAccessToken?: string
+      attachmentsAccessToken?: string
       preventPayment: boolean
     }>({
       ...this,
