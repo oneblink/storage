@@ -77,4 +77,13 @@ export type UploadPDFConversionOptions = UploadOptions & {
   formId: number
 }
 
+export type UploadAiBuilderAttachmentOptions = UploadOptions & {
+  /** The file data to upload */
+  data: AttachmentUploadData
+  /** A standard MIME type describing the format of the contents */
+  contentType: string
+  /** The id of the Form that the AI Builder is being used with */
+  formId: number
+}
+
 export type UploadEmailAttachmentOptions = UploadAssetOptions

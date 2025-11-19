@@ -7,6 +7,7 @@ import {
   UploadOptions,
   UploadEmailAttachmentOptions,
   UploadPDFConversionOptions,
+  UploadAiBuilderAttachmentOptions,
 } from './types'
 import { SubmissionTypes } from '@oneblink/types'
 import generateFormSubmissionTags from './generateFormSubmissionTags'
@@ -518,6 +519,43 @@ export default class OneBlinkUploader {
       contentType: 'application/pdf',
       body: data,
       key: `forms/${formId}/pdf-conversion`,
+      abortSignal,
+      onProgress,
+    })
+  }
+
+  /**
+   * Upload an attachment for use with the AI builder.
+   *
+   * #### Example
+   *
+   * ```ts
+   * const abortController = new AbortController()
+   * const result = await uploader.uploadAiBuilderAttachment({
+   *   onProgress: (progress) => {
+   *     // ...
+   *   },
+   *   data: attachmentData,
+   *   formId: 1,
+   *   abortSignal: abortController.signal,
+   * })
+   * ```
+   *
+   * @param data The attachment data and options
+   * @returns The upload result
+   */
+  async uploadAiBuilderAttachment({
+    onProgress,
+    abortSignal,
+    data,
+    formId,
+    contentType,
+  }: UploadAiBuilderAttachmentOptions) {
+    return await uploadToS3({
+      ...this,
+      contentType,
+      body: data,
+      key: `forms/${formId}/ai-builder/attachments`,
       abortSignal,
       onProgress,
     })
