@@ -550,12 +550,16 @@ export default class OneBlinkUploader {
     data,
     formId,
     contentType,
+    fileName,
   }: UploadAiBuilderAttachmentOptions) {
     return await uploadToS3({
       ...this,
       contentType,
       body: data,
       key: `forms/${formId}/ai-builder/attachments`,
+      requestBodyHeader: {
+        filename: encodeURIComponent(fileName),
+      },
       abortSignal,
       onProgress,
     })

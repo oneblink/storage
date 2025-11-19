@@ -84,6 +84,8 @@ export type UploadAiBuilderAttachmentOptions = UploadOptions & {
   contentType: string
   /** The id of the Form that the AI Builder is being used with */
   formId: number
+  /** The name of the file being uploaded */
+  fileName: string
 }
 
 export type UploadEmailAttachmentOptions = UploadAssetOptions
