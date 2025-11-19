@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- `OneBlinkUploader.uploadAiBuilderAttachment()`
+
 ## [3.2.3] - 2025-08-29
 
 ### Added
