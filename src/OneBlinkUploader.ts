@@ -558,7 +558,7 @@ export default class OneBlinkUploader {
       body: data,
       key: `forms/${formId}/ai-builder/attachments`,
       requestBodyHeader: {
-        filename: encodeURIComponent(fileName),
+        fileName: encodeURIComponent(fileName),
       },
       abortSignal,
       onProgress,
