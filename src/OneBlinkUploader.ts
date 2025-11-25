@@ -243,6 +243,7 @@ export default class OneBlinkUploader {
     title,
     lastElementUpdated,
     sectionState,
+    previousElapsedDurationSeconds,
     onProgress,
     abortSignal,
   }: UploadFormSubmissionOptions & {
@@ -259,6 +260,8 @@ export default class OneBlinkUploader {
     lastElementUpdated?: SubmissionTypes.NewS3SubmissionData['lastElementUpdated']
     /** The open/closed state of collapsible sections before saving draft */
     sectionState?: SubmissionTypes.NewS3SubmissionData['sectionState']
+    /** The previously elapsed duration in seconds before saving draft */
+    previousElapsedDurationSeconds?: SubmissionTypes.NewS3SubmissionData['previousElapsedDurationSeconds']
   }) {
     const newS3SubmissionData: SubmissionTypes.NewS3SubmissionData = {
       submission,
@@ -266,6 +269,7 @@ export default class OneBlinkUploader {
       device,
       lastElementUpdated,
       sectionState,
+      previousElapsedDurationSeconds,
     }
     const tags = generateFormSubmissionTags({
       userToken,
