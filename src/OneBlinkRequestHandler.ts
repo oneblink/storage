@@ -5,8 +5,8 @@ import {
   IOneBlinkHttpHandler,
   OneBlinkResponse,
   FailResponse,
-} from './http-handlers/types'
-import OneBlinkStorageError from './OneBlinkStorageError'
+} from './http-handlers/types.js'
+import OneBlinkStorageError from './OneBlinkStorageError.js'
 
 /**
  * Our own custom request handler to allow the response header which includes

@@ -1,5 +1,5 @@
-import { DownloadOptions, StorageConstructorOptions } from './types'
-import downloadJsonFromS3 from './downloadJsonFromS3'
+import { DownloadOptions, StorageConstructorOptions } from './types.js'
+import downloadJsonFromS3 from './downloadJsonFromS3.js'
 import { SubmissionTypes } from '@oneblink/types'
 /**
  * Used to create an instance of the OneBlinkDownloader, exposing methods to

@@ -1,4 +1,5 @@
-import { determineUploadProgressAsPercentage } from '../src/uploadToS3'
+import { describe, it, expect } from 'vitest'
+import { determineUploadProgressAsPercentage } from '../src/uploadToS3.js'
 
 describe('determineUploadProgressAsPercentage', () => {
   it('should return 0 when no progress', () => {

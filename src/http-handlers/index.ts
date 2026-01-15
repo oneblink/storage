@@ -1,6 +1,6 @@
 import { isBrowser, isNode } from 'browser-or-node'
-import { OneBlinkNodeJsHandler } from './NodeJsHandler'
-import { OneBlinkFetchHandler } from './FetchHandler'
+import { OneBlinkNodeJsHandler } from './NodeJsHandler.js'
+import { OneBlinkFetchHandler } from './FetchHandler.js'
 
 export function getOneBlinkHttpHandler() {
   if (isBrowser) {

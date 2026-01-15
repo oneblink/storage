@@ -1,7 +1,7 @@
 import { GetObjectCommand, GetObjectCommandOutput } from '@aws-sdk/client-s3'
-import { DownloadOptions, StorageConstructorOptions } from './types'
-import { generateS3Client } from './generateS3Client'
-import OneBlinkStorageError from './OneBlinkStorageError'
+import { DownloadOptions, StorageConstructorOptions } from './types.js'
+import { generateS3Client } from './generateS3Client.js'
+import OneBlinkStorageError from './OneBlinkStorageError.js'
 
 export default async function downloadJsonFromS3<T>({
   key,

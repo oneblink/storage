@@ -1,8 +1,8 @@
 import { PutObjectCommandInput } from '@aws-sdk/client-s3'
 import { Upload, Progress } from '@aws-sdk/lib-storage'
-import { StorageConstructorOptions, UploadOptions } from './types'
-import { RequestBodyHeader } from './http-handlers/types'
-import { generateS3Client } from './generateS3Client'
+import { StorageConstructorOptions, UploadOptions } from './types.js'
+import { RequestBodyHeader } from './http-handlers/types.js'
+import { generateS3Client } from './generateS3Client.js'
 
 /** The properties to be passed to the uploadToS3 function */
 interface UploadToS3Props extends UploadOptions, StorageConstructorOptions {

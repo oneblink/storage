@@ -1,6 +1,6 @@
 import { HttpRequest, HttpResponse } from '@smithy/protocol-http'
 import { HttpHandlerOptions } from '@smithy/types'
-import { IOneBlinkHttpHandler } from './types'
+import { IOneBlinkHttpHandler } from './types.js'
 import { GetObjectCommandOutput } from '@aws-sdk/client-s3'
 
 export class OneBlinkFetchHandler implements IOneBlinkHttpHandler {
