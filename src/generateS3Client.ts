@@ -1,9 +1,9 @@
 import { S3Client } from '@aws-sdk/client-s3'
 import { AwsCredentialIdentity } from '@smithy/types'
-import { StorageConstructorOptions } from './types'
-import { getOneBlinkHttpHandler } from './http-handlers'
-import { OneBlinkRequestHandler } from './OneBlinkRequestHandler'
-import { RequestBodyHeader } from './http-handlers/types'
+import { StorageConstructorOptions } from './types.js'
+import { getOneBlinkHttpHandler } from './http-handlers/index.js'
+import { OneBlinkRequestHandler } from './OneBlinkRequestHandler.js'
+import { RequestBodyHeader } from './http-handlers/types.js'
 
 const RETRY_ATTEMPTS = 3
 

@@ -1,4 +1,4 @@
-import uploadToS3 from './uploadToS3'
+import uploadToS3 from './uploadToS3.js'
 import {
   AttachmentUploadData,
   StorageConstructorOptions,
@@ -8,9 +8,9 @@ import {
   UploadEmailAttachmentOptions,
   UploadPDFConversionOptions,
   UploadAiBuilderAttachmentOptions,
-} from './types'
+} from './types.js'
 import { SubmissionTypes } from '@oneblink/types'
-import generateFormSubmissionTags from './generateFormSubmissionTags'
+import generateFormSubmissionTags from './generateFormSubmissionTags.js'
 /**
  * Used to create an instance of the OneBlinkUploader, exposing methods to
  * upload submissions and other types of files

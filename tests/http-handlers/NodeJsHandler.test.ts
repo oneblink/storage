@@ -1,4 +1,5 @@
-import { OneBlinkNodeJsHandler } from '../../src/http-handlers/NodeJsHandler'
+import { describe, expect, it } from 'vitest'
+import { OneBlinkNodeJsHandler } from '../../src/http-handlers/NodeJsHandler.js'
 
 describe('determineQueueSize', () => {
   const oneBlinkNodeJsHandler = new OneBlinkNodeJsHandler()

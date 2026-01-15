@@ -1,4 +1,5 @@
-import { OneBlinkFetchHandler } from '../../src/http-handlers/FetchHandler'
+import { describe, expect, it } from 'vitest'
+import { OneBlinkFetchHandler } from '../../src/http-handlers/FetchHandler.js'
 
 describe('determineQueueSize', () => {
   const oneBlinkFetchHandler = new OneBlinkFetchHandler()
@@ -49,7 +50,6 @@ describe('determineQueueSize', () => {
       },
       writable: true,
     })
-    console.log(global.window.navigator)
     expect(determineQueueSize()).toBe(1)
     Object.defineProperty(global.window, 'navigator', {
       value: {
