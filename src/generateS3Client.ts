@@ -42,6 +42,8 @@ export function generateS3Client<T>({
       maxAttempts: RETRY_ATTEMPTS,
       requestHandler: oneBlinkRequestHandler,
       credentials: {} as AwsCredentialIdentity,
+      requestChecksumCalculation:
+        oneBlinkHttpHandler.requestChecksumCalculation,
       // Sign requests with our own Authorization header instead
       // of letting AWS SDK attempt to generate credentials
       signer: {

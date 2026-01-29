@@ -2,8 +2,11 @@ import { HttpRequest, HttpResponse } from '@smithy/protocol-http'
 import { HttpHandlerOptions } from '@smithy/types'
 import { IOneBlinkHttpHandler, FailResponse } from './types.js'
 import { GetObjectCommandOutput } from '@aws-sdk/client-s3'
+import { RequestChecksumCalculation } from '@aws-sdk/middleware-flexible-checksums'
 
 export class OneBlinkNodeJsHandler implements IOneBlinkHttpHandler {
+  requestChecksumCalculation = RequestChecksumCalculation.WHEN_SUPPORTED
+
   async handleRequest(
     request: HttpRequest,
     options?: HttpHandlerOptions | undefined,
