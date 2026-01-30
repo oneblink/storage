@@ -405,6 +405,13 @@ export default class OneBlinkUploader {
   /**
    * Upload form prefill data.
    *
+   * Note: This function requires a JWT created from a Developer Key with the
+   * `Upload Form Prefill Data' permission set to 'On'. The [OneBlink NodeJS
+   * SDK](https://github.com/oneblink/sdk-node-js) handles this for you with the
+   * [generateFormUrl](https://oneblink.github.io/sdk-node-js/classes/oneblink.Forms.html#generateFormUrl)
+   * function, and as such it is recommended you use that instead for uploading
+   * prefill data.
+   *
    * #### Example
    *
    * ```ts
