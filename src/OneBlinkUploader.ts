@@ -451,6 +451,13 @@ export default class OneBlinkUploader {
   /**
    * Upload an email attachment. Email attachments are always private.
    *
+   * Note: This function requires a JWT created from a Developer Key with the
+   * `Upload Attachments' permission set to 'On'. The [OneBlink NodeJS
+   * SDK](https://github.com/oneblink/sdk-node-js) handles this for you with the
+   * [uploadEmailAttachment](https://oneblink.github.io/sdk-node-js/classes/oneblink.Forms.html#uploadEmailAttachment)
+   * function, and as such it is recommended you use that instead for uploading
+   * email attachments.
+   *
    * #### Example
    *
    * ```ts
