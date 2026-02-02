@@ -7,10 +7,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [4.0.0] - 2026-02-02
+
 ### Changed
 
 - **[BREAKING]** This package is now pure ESM. Please [read this](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c).
 - **[BREAKING]** Require Node.js 24
+
+### Dependencies
+
+- update @aws-sdk/client-s3 to [3.969.0](https://github.com/aws/aws-sdk-js-v3/releases/tag/v3.969.0) (from [3.637.0](https://github.com/aws/aws-sdk-js-v3/releases/tag/v3.637.0))
+
+- update @aws-sdk/lib-storage to [3.969.0](https://github.com/aws/aws-sdk-js-v3/releases/tag/v3.969.0) (from [3.637.0](https://github.com/aws/aws-sdk-js-v3/releases/tag/v3.637.0))
 
 ## [3.4.0] - 2025-12-17
 
