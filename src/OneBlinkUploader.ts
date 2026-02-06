@@ -297,7 +297,7 @@ export default class OneBlinkUploader {
         jobId,
         previousFormSubmissionApprovalId,
         createdAt,
-        title,
+        title: encodeURIComponent(title),
         formSubmissionDraftId,
       },
     })
