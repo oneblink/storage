@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- `title` is now encoded in `OneBlinkUploader.uploadFormSubmissionDraft()`
+- **[BREAKING]** `title` is now encoded in `OneBlinkUploader.uploadFormSubmissionDraft()`
 
 ### Fixed
 
