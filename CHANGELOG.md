@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [5.0.0] - 2026-02-23
+
 ### Changed
 
 - **[BREAKING]** `title` is now encoded in `OneBlinkUploader.uploadFormSubmissionDraft()`
@@ -14,6 +16,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - github action permissions to allow docs and github release jobs
+
+### Dependencies
+
+- update @aws-sdk/client-s3 to [3.987.0](https://github.com/aws/aws-sdk-js-v3/blob/master/CHANGELOG.md) (from [3.969.0](https://github.com/aws/aws-sdk-js-v3/blob/master/CHANGELOG.md))
+
+- update @aws-sdk/lib-storage to [3.987.0](https://github.com/aws/aws-sdk-js-v3/blob/master/CHANGELOG.md) (from [3.969.0](https://github.com/aws/aws-sdk-js-v3/blob/master/CHANGELOG.md))
 
 ## [4.0.0] - 2026-02-02
 
