@@ -532,7 +532,10 @@ export default class OneBlinkUploader {
     data,
     formId,
   }: UploadPDFConversionOptions) {
-    return await uploadToS3({
+    return await uploadToS3<{
+      pdfConversionId: string
+      pdfConversionJobId: number
+    }>({
       ...this,
       contentType: 'application/pdf',
       body: data,
@@ -584,55 +587,39 @@ export default class OneBlinkUploader {
   }
 
   /**
-   * Upload a volunteer asset file. Asset files are always public.
+   * Upload a PDF for a form to be used as a custom PDF in workflow events.
+   * Custom PDFs are always private.
    *
    * #### Example
    *
    * ```ts
    * const abortController = new AbortController()
-   * const result = await uploader.uploadVolunteersAsset({
+   * const result = await uploader.uploadFormCustomPDF({
    *   onProgress: (progress) => {
    *     // ...
    *   },
-   *   data: new Blob(['a string of data'], {
-   *     type: 'text/plain',
-   *   }),
-   *   fileName: 'file.txt',
-   *   contentType: 'text/plain',
+   *   data: pdfData,
+   *   formId: 1,
    *   abortSignal: abortController.signal,
-   *   formsAppId: 1,
    * })
    * ```
    *
-   * @param data The asset upload data and options
+   * @param data The PDF data and options
    * @returns The upload result
    */
-  async uploadVolunteersAsset({
+  async uploadFormCustomPDF({
     onProgress,
     abortSignal,
     data,
-    contentType,
-    fileName,
-    formsAppId,
-  }: UploadOptions &
-    UploadAssetOptions & {
-      /** The identifier for the volunteers app that owns the asset */
-      formsAppId: number
-    }) {
-    return await uploadToS3<{
-      url: string
-    }>({
+    formId,
+  }: UploadPDFConversionOptions) {
+    return await uploadToS3({
       ...this,
-      contentType,
+      contentType: 'application/pdf',
       body: data,
-      key: 'volunteers/assets',
+      key: `forms/${formId}/custom-pdf`,
       abortSignal,
       onProgress,
-      requestBodyHeader: {
-        fileName: encodeURIComponent(fileName),
-        formsAppId,
-      },
-      isPublic: true,
     })
   }
 }
