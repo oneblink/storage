@@ -7,14 +7,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-### Added
-
-- `jobId` to `OneBlinkUploader.uploadPDFConversion()` result
-
-### Removed
-
-- **[BREAKING]** `OneBlinkUploader.uploadVolunteersAsset()`
-
 ## [5.0.0] - 2026-02-23
 
 ### Changed

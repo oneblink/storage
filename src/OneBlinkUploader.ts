@@ -532,9 +532,7 @@ export default class OneBlinkUploader {
     data,
     formId,
   }: UploadPDFConversionOptions) {
-    return await uploadToS3<{
-      jobId: string
-    }>({
+    return await uploadToS3({
       ...this,
       contentType: 'application/pdf',
       body: data,
@@ -582,6 +580,59 @@ export default class OneBlinkUploader {
       },
       abortSignal,
       onProgress,
+    })
+  }
+
+  /**
+   * Upload a volunteer asset file. Asset files are always public.
+   *
+   * #### Example
+   *
+   * ```ts
+   * const abortController = new AbortController()
+   * const result = await uploader.uploadVolunteersAsset({
+   *   onProgress: (progress) => {
+   *     // ...
+   *   },
+   *   data: new Blob(['a string of data'], {
+   *     type: 'text/plain',
+   *   }),
+   *   fileName: 'file.txt',
+   *   contentType: 'text/plain',
+   *   abortSignal: abortController.signal,
+   *   formsAppId: 1,
+   * })
+   * ```
+   *
+   * @param data The asset upload data and options
+   * @returns The upload result
+   */
+  async uploadVolunteersAsset({
+    onProgress,
+    abortSignal,
+    data,
+    contentType,
+    fileName,
+    formsAppId,
+  }: UploadOptions &
+    UploadAssetOptions & {
+      /** The identifier for the volunteers app that owns the asset */
+      formsAppId: number
+    }) {
+    return await uploadToS3<{
+      url: string
+    }>({
+      ...this,
+      contentType,
+      body: data,
+      key: 'volunteers/assets',
+      abortSignal,
+      onProgress,
+      requestBodyHeader: {
+        fileName: encodeURIComponent(fileName),
+        formsAppId,
+      },
+      isPublic: true,
     })
   }
 }
