@@ -6,7 +6,7 @@ import {
   UploadFormSubmissionOptions,
   UploadOptions,
   UploadEmailAttachmentOptions,
-  UploadPDFConversionOptions,
+  UploadCustomPDFOptions,
   UploadAiBuilderAttachmentOptions,
 } from './types.js'
 import { SubmissionTypes } from '@oneblink/types'
@@ -507,45 +507,6 @@ export default class OneBlinkUploader {
   }
 
   /**
-   * Upload a PDF for conversion. PDF Conversions are always private.
-   *
-   * #### Example
-   *
-   * ```ts
-   * const abortController = new AbortController()
-   * const result = await uploader.uploadPDFConversion({
-   *   onProgress: (progress) => {
-   *     // ...
-   *   },
-   *   data: pdfData,
-   *   formId: 1,
-   *   abortSignal: abortController.signal,
-   * })
-   * ```
-   *
-   * @param data The PDF data and options
-   * @returns The upload result
-   */
-  async uploadPDFConversion({
-    onProgress,
-    abortSignal,
-    data,
-    formId,
-  }: UploadPDFConversionOptions) {
-    return await uploadToS3<{
-      pdfConversionId: string
-      pdfConversionJobId: number
-    }>({
-      ...this,
-      contentType: 'application/pdf',
-      body: data,
-      key: `forms/${formId}/pdf-conversion`,
-      abortSignal,
-      onProgress,
-    })
-  }
-
-  /**
    * Upload an attachment for use with the AI builder.
    *
    * #### Example
@@ -612,7 +573,7 @@ export default class OneBlinkUploader {
     abortSignal,
     data,
     formId,
-  }: UploadPDFConversionOptions) {
+  }: UploadCustomPDFOptions) {
     return await uploadToS3({
       ...this,
       contentType: 'application/pdf',

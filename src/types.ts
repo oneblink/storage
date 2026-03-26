@@ -70,7 +70,7 @@ export type UploadAssetOptions = UploadOptions & {
   fileName: string
 }
 
-export type UploadPDFConversionOptions = UploadOptions & {
+export type UploadCustomPDFOptions = UploadOptions & {
   /** The PDF File to upload */
   data: AttachmentUploadData
   /** The id of the Form that the PDF Conversion is occurring on */
