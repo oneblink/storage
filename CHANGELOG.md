@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- `taskCompletionTimestamp` to `OneBlinkUploader.uploadSubmission()` options
 - `username` prop to `uploadPrefillData`
 
 ## [6.0.0] - 2026-03-31
