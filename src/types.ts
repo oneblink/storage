@@ -59,6 +59,8 @@ export type UploadFormSubmissionOptions = UploadOptions & {
    * associated with
    */
   taskGroupInstanceId?: string
+  /** The date and time (in ISO format) the task was completed */
+  taskCompletionTimestamp?: string
 }
 
 export type UploadAssetOptions = UploadOptions & {
