@@ -90,4 +90,18 @@ export type UploadAiBuilderAttachmentOptions = UploadOptions & {
   fileName: string
 }
 
+export type UploadAiEnvironmentStylingAttachmentOptions = UploadOptions & {
+  /** The file data to upload */
+  data: AttachmentUploadData
+  /** A standard MIME type describing the format of the contents */
+  contentType: string
+  /**
+   * The id of the Forms App Environment that the AI Environment Styling is
+   * being used with
+   */
+  formsAppEnvironmentId: number
+  /** The name of the file being uploaded */
+  fileName: string
+}
+
 export type UploadEmailAttachmentOptions = UploadAssetOptions
