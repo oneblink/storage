@@ -74,6 +74,7 @@ export default class OneBlinkUploader {
     taskId,
     taskActionId,
     taskGroupInstanceId,
+    taskCompletionTimestamp,
     formSubmissionDraftId,
     completionTimestamp,
     recaptchas = [],
@@ -127,6 +128,7 @@ export default class OneBlinkUploader {
         taskId,
         taskActionId,
         taskGroupInstanceId,
+        taskCompletionTimestamp,
         jobId,
         previousFormSubmissionApprovalId,
         recaptchas,
@@ -435,6 +437,7 @@ export default class OneBlinkUploader {
   async uploadPrefillData({
     formId,
     prefillData,
+    username,
     onProgress,
     abortSignal,
   }: UploadOptions & {
@@ -442,6 +445,8 @@ export default class OneBlinkUploader {
     formId: number
     /** The prefill data to upload */
     prefillData: SubmissionTypes.NewS3SubmissionData['submission']
+    /** A username to allow a single user to download the prefill data */
+    username?: string
   }) {
     return await uploadToS3<{
       preFillFormDataId: string
@@ -452,6 +457,9 @@ export default class OneBlinkUploader {
       key: `forms/${formId}/pre-fill`,
       abortSignal,
       onProgress,
+      requestBodyHeader: {
+        username: username ? encodeURIComponent(username) : undefined,
+      },
     })
   }
 

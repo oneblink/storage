@@ -10,6 +10,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Removed
 
 - **[BREAKING]** `OneBlinkUploader.uploadPDFConversion()`
+- 
+## [6.1.0] - 2026-04-10
+
+### Added
+
+- `taskCompletionTimestamp` to `OneBlinkUploader.uploadSubmission()` options
+- `username` prop to `uploadPrefillData`
+
+## [6.0.0] - 2026-03-31
 
 ### Added
 
