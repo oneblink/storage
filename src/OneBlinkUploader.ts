@@ -8,7 +8,7 @@ import {
   UploadEmailAttachmentOptions,
   UploadCustomPDFOptions,
   UploadAiBuilderAttachmentOptions,
-  UploadAiEnvironmentStylingAttachmentOptions,
+  UploadAiEnvironmentAppStylesBuilderOptions,
 } from './types.js'
 import { SubmissionTypes } from '@oneblink/types'
 import generateFormSubmissionTags from './generateFormSubmissionTags.js'
@@ -557,33 +557,34 @@ export default class OneBlinkUploader {
   }
 
   /**
-   * Upload an attachment for use with the AI environment styling.
+   * Upload an attachment for use with the AI environment styles builder.
    *
    * #### Example
    *
    * ```ts
    * const abortController = new AbortController()
-   * const result = await uploader.uploadAiEnvironmentStylingAttachment({
-   *   onProgress: (progress) => {
-   *     // ...
-   *   },
-   *   data: attachmentData,
-   *   formsAppEnvironmentId: 1,
-   *   abortSignal: abortController.signal,
-   * })
+   * const result =
+   *   await uploader.uploadAiEnvironmentAppStylesBuilderAttachment({
+   *     onProgress: (progress) => {
+   *       // ...
+   *     },
+   *     data: attachmentData,
+   *     formsAppEnvironmentId: 1,
+   *     abortSignal: abortController.signal,
+   *   })
    * ```
    *
    * @param data The attachment data and options
    * @returns The upload result
    */
-  async uploadAiEnvironmentStylingAttachment({
+  async uploadAiEnvironmentAppStylesBuilderAttachment({
     onProgress,
     abortSignal,
     data,
     formsAppEnvironmentId,
     contentType,
     fileName,
-  }: UploadAiEnvironmentStylingAttachmentOptions) {
+  }: UploadAiEnvironmentAppStylesBuilderOptions) {
     return await uploadToS3({
       ...this,
       contentType,
