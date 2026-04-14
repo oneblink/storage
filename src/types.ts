@@ -90,7 +90,7 @@ export type UploadAiBuilderAttachmentOptions = UploadOptions & {
   fileName: string
 }
 
-export type UploadAiEnvironmentStylesBuilderOptions = UploadOptions & {
+export type UploadAiEnvironmentAppStylesBuilderOptions = UploadOptions & {
   /** The file data to upload */
   data: AttachmentUploadData
   /** A standard MIME type describing the format of the contents */

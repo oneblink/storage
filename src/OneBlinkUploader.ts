@@ -8,7 +8,7 @@ import {
   UploadEmailAttachmentOptions,
   UploadCustomPDFOptions,
   UploadAiBuilderAttachmentOptions,
-  UploadAiEnvironmentStylesBuilderOptions,
+  UploadAiEnvironmentAppStylesBuilderOptions,
 } from './types.js'
 import { SubmissionTypes } from '@oneblink/types'
 import generateFormSubmissionTags from './generateFormSubmissionTags.js'
@@ -564,7 +564,7 @@ export default class OneBlinkUploader {
    * ```ts
    * const abortController = new AbortController()
    * const result =
-   *   await uploader.uploadAiEnvironmentStylesBuilderAttachment({
+   *   await uploader.uploadAiEnvironmentAppStylesBuilderAttachment({
    *     onProgress: (progress) => {
    *       // ...
    *     },
@@ -577,14 +577,14 @@ export default class OneBlinkUploader {
    * @param data The attachment data and options
    * @returns The upload result
    */
-  async uploadAiEnvironmentStylesBuilderAttachment({
+  async uploadAiEnvironmentAppStylesBuilderAttachment({
     onProgress,
     abortSignal,
     data,
     formsAppEnvironmentId,
     contentType,
     fileName,
-  }: UploadAiEnvironmentStylesBuilderOptions) {
+  }: UploadAiEnvironmentAppStylesBuilderOptions) {
     return await uploadToS3({
       ...this,
       contentType,
