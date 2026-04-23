@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [7.0.0] - 2026-04-23
+
 ### Added
 
 - `OneBlinkUploader.uploadAiEnvironmentStylistAttachment()`
