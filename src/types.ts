@@ -61,6 +61,11 @@ export type UploadFormSubmissionOptions = UploadOptions & {
   taskGroupInstanceId?: string
   /** The date and time (in ISO format) the task was completed */
   taskCompletionTimestamp?: string
+  /**
+   * `true` if the task is being completed outside of its schedule or `false` if
+   * the task was scheduled to be completed
+   */
+  taskIsAdhoc?: boolean
 }
 
 export type UploadAssetOptions = UploadOptions & {
