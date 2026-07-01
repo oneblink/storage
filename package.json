@@ -9,6 +9,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.987.0",
     "@aws-sdk/lib-storage": "^3.987.0",
+    "@aws-sdk/middleware-flexible-checksums": "^3.974.35",
     "browser-or-node": "^3.0.0"
   },
   "devDependencies": {
