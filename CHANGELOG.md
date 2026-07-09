@@ -7,9 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [7.1.2] - 2026-07-09
+
 ### Fixed
 
 - `npm audit fix`
+
+### Dependencies
+
+- depend upon @aws-sdk/middleware-flexible-checksums [3.974.35](https://github.com/aws/aws-sdk-js-v3/blob/master/CHANGELOG.md)
 
 ## [7.1.1] - 2026-06-18
 
