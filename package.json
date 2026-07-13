@@ -45,7 +45,7 @@
     "dist"
   ],
   "homepage": "https://github.com/oneblink/storage",
-  "license": "ISC",
+  "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "publishConfig": {
