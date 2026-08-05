@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- `OneBlinkUploader.uploadAiConversationAttachment()` for the organisation-scoped AI conversation attachment endpoint
+
+### Removed
+
+- **[BREAKING]** `OneBlinkUploader.uploadAiBuilderAttachment()` — use `uploadAiConversationAttachment()`
+- **[BREAKING]** `OneBlinkUploader.uploadAiEnvironmentStylistAttachment()` — use `uploadAiConversationAttachment()`
+
 ## [7.1.2] - 2026-07-09
 
 ### Fixed
