@@ -84,27 +84,13 @@ export type UploadCustomPDFOptions = UploadOptions & {
   formId: number
 }
 
-export type UploadAiBuilderAttachmentOptions = UploadOptions & {
+export type UploadAiConversationAttachmentOptions = UploadOptions & {
+  /** The identifier for the organisation that owns the AI conversation */
+  organisationId: string
   /** The file data to upload */
   data: AttachmentUploadData
   /** A standard MIME type describing the format of the contents */
   contentType: string
-  /** The id of the Form that the AI Builder is being used with */
-  formId: number
-  /** The name of the file being uploaded */
-  fileName: string
-}
-
-export type UploadAiEnvironmentStylistAttachmentOptions = UploadOptions & {
-  /** The file data to upload */
-  data: AttachmentUploadData
-  /** A standard MIME type describing the format of the contents */
-  contentType: string
-  /**
-   * The id of the Forms App Environment that the AI Environment Styles Builder
-   * is being used with
-   */
-  formsAppEnvironmentId: number
   /** The name of the file being uploaded */
   fileName: string
 }

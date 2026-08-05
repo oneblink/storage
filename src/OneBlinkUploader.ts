@@ -7,8 +7,7 @@ import {
   UploadOptions,
   UploadEmailAttachmentOptions,
   UploadCustomPDFOptions,
-  UploadAiBuilderAttachmentOptions,
-  UploadAiEnvironmentStylistAttachmentOptions,
+  UploadAiConversationAttachmentOptions,
 } from './types.js'
 import { SubmissionTypes } from '@oneblink/types'
 import generateFormSubmissionTags from './generateFormSubmissionTags.js'
@@ -518,18 +517,18 @@ export default class OneBlinkUploader {
   }
 
   /**
-   * Upload an attachment for use with the AI builder.
+   * Upload an attachment for use with an organisation-scoped AI conversation.
+   * Attachments can be used with any AI conversation mode.
    *
    * #### Example
    *
    * ```ts
    * const abortController = new AbortController()
-   * const result = await uploader.uploadAiBuilderAttachment({
-   *   onProgress: (progress) => {
-   *     // ...
-   *   },
+   * const result = await uploader.uploadAiConversationAttachment({
+   *   organisationId: 'abc123',
    *   data: attachmentData,
-   *   formId: 1,
+   *   contentType: 'image/png',
+   *   fileName: 'screenshot.png',
    *   abortSignal: abortController.signal,
    * })
    * ```
@@ -537,60 +536,19 @@ export default class OneBlinkUploader {
    * @param data The attachment data and options
    * @returns The upload result
    */
-  async uploadAiBuilderAttachment({
+  async uploadAiConversationAttachment({
     onProgress,
     abortSignal,
     data,
-    formId,
+    organisationId,
     contentType,
     fileName,
-  }: UploadAiBuilderAttachmentOptions) {
+  }: UploadAiConversationAttachmentOptions) {
     return await uploadToS3({
       ...this,
       contentType,
       body: data,
-      key: `forms/${formId}/ai-builder/attachments`,
-      requestBodyHeader: {
-        fileName: encodeURIComponent(fileName),
-      },
-      abortSignal,
-      onProgress,
-    })
-  }
-
-  /**
-   * Upload an attachment for use with the AI environment styles builder.
-   *
-   * #### Example
-   *
-   * ```ts
-   * const abortController = new AbortController()
-   * const result = await uploader.uploadAiEnvironmentStylistAttachment({
-   *   onProgress: (progress) => {
-   *     // ...
-   *   },
-   *   data: attachmentData,
-   *   formsAppEnvironmentId: 1,
-   *   abortSignal: abortController.signal,
-   * })
-   * ```
-   *
-   * @param data The attachment data and options
-   * @returns The upload result
-   */
-  async uploadAiEnvironmentStylistAttachment({
-    onProgress,
-    abortSignal,
-    data,
-    formsAppEnvironmentId,
-    contentType,
-    fileName,
-  }: UploadAiEnvironmentStylistAttachmentOptions) {
-    return await uploadToS3({
-      ...this,
-      contentType,
-      body: data,
-      key: `forms-app-environments/${formsAppEnvironmentId}/ai-stylist/attachments`,
+      key: `organisations/${organisationId}/ai-conversation/attachments`,
       requestBodyHeader: {
         fileName: encodeURIComponent(fileName),
       },
