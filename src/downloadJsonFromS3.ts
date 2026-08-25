@@ -3,14 +3,19 @@ import { DownloadOptions, StorageConstructorOptions } from './types.js'
 import { generateS3Client } from './generateS3Client.js'
 import OneBlinkStorageError from './OneBlinkStorageError.js'
 
-export default async function downloadJsonFromS3<T>({
+export type DownloadedJson<T> = {
+  data: T
+  versionId: string | undefined
+}
+
+export async function downloadJsonFromS3WithMetadata<T>({
   key,
   abortSignal,
   ...storageConstructorOptions
 }: DownloadOptions &
   StorageConstructorOptions & {
     key: string
-  }): Promise<T | undefined> {
+  }): Promise<DownloadedJson<T> | undefined> {
   const { s3Client, bucket, oneBlinkRequestHandler } = generateS3Client({
     ...storageConstructorOptions,
     requestBodyHeader: undefined,
@@ -31,9 +36,16 @@ export default async function downloadJsonFromS3<T>({
           ),
       )
 
-    return oneBlinkRequestHandler.oneBlinkHttpHandler.parseGetObjectCommandOutputAsJson<T>(
-      getObjectCommandOutput,
-    )
+    const data =
+      await oneBlinkRequestHandler.oneBlinkHttpHandler.parseGetObjectCommandOutputAsJson<T>(
+        getObjectCommandOutput,
+      )
+    return data === undefined
+      ? undefined
+      : {
+          data,
+          versionId: getObjectCommandOutput.VersionId,
+        }
   } catch (error) {
     if (error instanceof OneBlinkStorageError && error.httpStatusCode === 403) {
       return
@@ -41,4 +53,10 @@ export default async function downloadJsonFromS3<T>({
       throw error
     }
   }
+}
+
+export default async function downloadJsonFromS3<T>(
+  options: Parameters<typeof downloadJsonFromS3WithMetadata<T>>[0],
+): Promise<T | undefined> {
+  return (await downloadJsonFromS3WithMetadata<T>(options))?.data
 }

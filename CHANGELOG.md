@@ -12,6 +12,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 - `OneBlinkUploader.uploadAiConversationAttachment()` for the organisation-scoped AI conversation attachment endpoint
+- `OneBlinkUploader.uploadFormSubmissionEdit()` to upload an edited form submission
+- `conflict` on `OneBlinkStorageError` when the API returns a structured 409 payload
+
+### Changed
+
+- **[BREAKING]** `OneBlinkDownloader.downloadSubmission()` now returns `{ data, versionId }` instead of the submission data directly
 
 ### Removed
 

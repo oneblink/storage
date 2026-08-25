@@ -12,6 +12,7 @@ export type OneBlinkResponse<T> = T & {
 export type FailResponse = {
   statusCode: number
   message: string
+  conflict?: string
 }
 
 export interface IOneBlinkHttpHandler {

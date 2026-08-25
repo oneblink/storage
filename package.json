@@ -17,7 +17,7 @@
     "@eslint/js": "^9.39.2",
     "@microsoft/eslint-plugin-sdl": "^1.1.0",
     "@oneblink/release-cli": "^5.1.0",
-    "@oneblink/types": "github:oneblink/types",
+    "@oneblink/types": "github:oneblink/types#AP-9986",
     "@types/node": "^24.10.8",
     "@typescript-eslint/eslint-plugin": "^8.55.0",
     "@typescript-eslint/parser": "^8.55.0",
@@ -66,7 +66,7 @@
     "release": "oneblink-release repository --no-name --update-dependents --force-update-dependency",
     "start": "tsc-watch",
     "test": "vitest run",
-    "types": "npm i -D github:oneblink/types",
+    "types": "npm i -D github:oneblink/types#AP-9986",
     "typescript": "tsc --noEmit",
     "update-dependents": "oneblink-release update-dependents --force-update-dependency"
   },

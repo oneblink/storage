@@ -1,5 +1,7 @@
 import { DownloadOptions, StorageConstructorOptions } from './types.js'
-import downloadJsonFromS3 from './downloadJsonFromS3.js'
+import downloadJsonFromS3, {
+  downloadJsonFromS3WithMetadata,
+} from './downloadJsonFromS3.js'
 import { SubmissionTypes } from '@oneblink/types'
 /**
  * Used to create an instance of the OneBlinkDownloader, exposing methods to
@@ -43,7 +45,7 @@ export default class OneBlinkDownloader {
    * ```
    *
    * @param data The submission upload data and options
-   * @returns The submission
+   * @returns The submission and its S3 object version
    */
   async downloadSubmission({
     submissionId,
@@ -55,11 +57,13 @@ export default class OneBlinkDownloader {
     /** The identifier of the form associated with the submission. */
     formId: number
   }) {
-    return await downloadJsonFromS3<SubmissionTypes.S3SubmissionData>({
-      ...this,
-      key: `forms/${formId}/submissions/${submissionId}`,
-      abortSignal,
-    })
+    return await downloadJsonFromS3WithMetadata<SubmissionTypes.S3SubmissionData>(
+      {
+        ...this,
+        key: `forms/${formId}/submissions/${submissionId}`,
+        abortSignal,
+      },
+    )
   }
 
   /**
