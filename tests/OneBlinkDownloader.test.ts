@@ -44,6 +44,44 @@ describe('OneBlinkDownloader', () => {
       getBearerToken: downloader.getBearerToken,
       key: 'forms/123/submissions/submission-id',
       abortSignal: undefined,
+      versionId: undefined,
+    })
+  })
+
+  it('downloads a specific S3 object version of a submission', async () => {
+    vi.mocked(downloadJsonFromS3WithMetadata).mockResolvedValue({
+      data: {
+        submission: { value: 'edited' },
+        definition: { id: 123 },
+      } as never,
+      versionId: 'edited-version-id',
+    })
+    const downloader = new OneBlinkDownloader({
+      apiOrigin: 'https://example.com',
+      region: 'ap-southeast-2',
+      getBearerToken: async () => 'token',
+    })
+
+    await expect(
+      downloader.downloadSubmission({
+        formId: 123,
+        submissionId: 'submission-id',
+        versionId: 'edited-version-id',
+      }),
+    ).resolves.toEqual({
+      data: {
+        submission: { value: 'edited' },
+        definition: { id: 123 },
+      },
+      versionId: 'edited-version-id',
+    })
+    expect(downloadJsonFromS3WithMetadata).toHaveBeenCalledWith({
+      apiOrigin: 'https://example.com',
+      region: 'ap-southeast-2',
+      getBearerToken: downloader.getBearerToken,
+      key: 'forms/123/submissions/submission-id',
+      abortSignal: undefined,
+      versionId: 'edited-version-id',
     })
   })
 })

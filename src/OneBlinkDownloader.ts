@@ -51,17 +51,24 @@ export default class OneBlinkDownloader {
     submissionId,
     formId,
     abortSignal,
+    versionId,
   }: DownloadOptions & {
     /** The identifier of the submission. */
     submissionId: string
     /** The identifier of the form associated with the submission. */
     formId: number
+    /**
+     * When set, download this S3 object version instead of the latest
+     * submission object.
+     */
+    versionId?: string
   }) {
     return await downloadJsonFromS3WithMetadata<SubmissionTypes.S3SubmissionData>(
       {
         ...this,
         key: `forms/${formId}/submissions/${submissionId}`,
         abortSignal,
+        versionId,
       },
     )
   }

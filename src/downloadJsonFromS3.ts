@@ -11,10 +11,12 @@ export type DownloadedJson<T> = {
 export async function downloadJsonFromS3WithMetadata<T>({
   key,
   abortSignal,
+  versionId,
   ...storageConstructorOptions
 }: DownloadOptions &
   StorageConstructorOptions & {
     key: string
+    versionId?: string
   }): Promise<DownloadedJson<T> | undefined> {
   const { s3Client, bucket, oneBlinkRequestHandler } = generateS3Client({
     ...storageConstructorOptions,
@@ -29,6 +31,7 @@ export async function downloadJsonFromS3WithMetadata<T>({
             new GetObjectCommand({
               Bucket: bucket,
               Key: key,
+              VersionId: versionId,
             }),
             {
               abortSignal,
