@@ -24,17 +24,20 @@ export class OneBlinkNodeJsHandler implements IOneBlinkHttpHandler {
         const { Readable } = await import('stream')
         if (response.body instanceof Readable) {
           const consumers = await import('stream/consumers')
+          const body = (await consumers.json(response.body)) as FailResponse
           return {
             statusCode: response.statusCode,
-            message: ((await consumers.json(response.body)) as FailResponse)
-              .message,
+            message: body.message,
+            conflict: body.conflict,
           }
         }
 
         if (typeof response.body === 'string') {
+          const body = JSON.parse(response.body) as FailResponse
           return {
             statusCode: response.statusCode,
-            message: JSON.parse(response.body).message,
+            message: body.message,
+            conflict: body.conflict,
           }
         }
         break

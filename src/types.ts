@@ -68,6 +68,26 @@ export type UploadFormSubmissionOptions = UploadOptions & {
   taskIsAdhoc?: boolean
 }
 
+/** The data and options used to upload an edited submission */
+export type UploadFormSubmissionEditOptions = UploadOptions & {
+  /** The edited submission data */
+  submission: SubmissionTypes.NewS3SubmissionData['submission']
+  /** The form definition used to edit the submission */
+  definition: SubmissionTypes.NewS3SubmissionData['definition']
+  /** The device used by the editor */
+  device?: SubmissionTypes.NewS3SubmissionData['device']
+  /** The date and time (in ISO format) the editor completed the edit */
+  completionTimestamp: NonNullable<
+    SubmissionTypes.NewS3SubmissionData['completionTimestamp']
+  >
+  /** The identifier of the original submission being edited */
+  submissionId: string
+  /** Why this edit is being submitted */
+  context: SubmissionTypes.FormSubmissionMetaEditContext
+  /** The S3 object version that is being edited */
+  editedS3ObjectVersionId: string
+}
+
 export type UploadAssetOptions = UploadOptions & {
   /** The file data to upload */
   data: AttachmentUploadData

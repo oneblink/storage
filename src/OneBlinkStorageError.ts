@@ -4,6 +4,12 @@ export default class OneBlinkStorageError extends Error {
   httpStatusCode: number
   /** The original error that was thrown */
   originalError?: Error
+  /**
+   * Machine-readable conflict from the API error payload, when present.
+   *
+   * See `Boom` `output.payload.conflict` on the API.
+   */
+  conflict?: string
 
   /**
    * Used to create an instance of the `OneBlinkStorageError` class.
@@ -18,6 +24,10 @@ export default class OneBlinkStorageError extends Error {
       httpStatusCode: number
       /** The original error that was thrown */
       originalError?: Error
+      /**
+       * Machine-readable conflict from the API error payload, when present.
+       */
+      conflict?: string
     },
   ) {
     super(message)
@@ -25,5 +35,6 @@ export default class OneBlinkStorageError extends Error {
 
     this.httpStatusCode = options.httpStatusCode
     this.originalError = options.originalError
+    this.conflict = options.conflict
   }
 }

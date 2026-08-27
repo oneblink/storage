@@ -68,6 +68,7 @@ export class OneBlinkRequestHandler<T>
         throw new OneBlinkStorageError(this.failResponse.message, {
           httpStatusCode: this.failResponse.statusCode,
           originalError: error instanceof Error ? error : undefined,
+          conflict: this.failResponse.conflict,
         })
       }
       throw error

@@ -1,6 +1,6 @@
 import { HttpRequest, HttpResponse } from '@smithy/protocol-http'
 import { HttpHandlerOptions } from '@smithy/types'
-import { IOneBlinkHttpHandler } from './types.js'
+import { IOneBlinkHttpHandler, FailResponse } from './types.js'
 import { GetObjectCommandOutput } from '@aws-sdk/client-s3'
 import { RequestChecksumCalculation } from '@aws-sdk/middleware-flexible-checksums'
 
@@ -20,9 +20,11 @@ export class OneBlinkFetchHandler implements IOneBlinkHttpHandler {
     switch (response.headers['content-type']) {
       case 'application/json; charset=utf-8':
       case 'application/json': {
+        const body = (await fetchResponse.json()) as FailResponse
         return {
           statusCode: response.statusCode,
-          message: (await fetchResponse.json()).message,
+          message: body.message,
+          conflict: body.conflict,
         }
       }
       default: {

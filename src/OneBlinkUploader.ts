@@ -8,6 +8,7 @@ import {
   UploadEmailAttachmentOptions,
   UploadCustomPDFOptions,
   UploadAiConversationAttachmentOptions,
+  UploadFormSubmissionEditOptions,
 } from './types.js'
 import { SubmissionTypes } from '@oneblink/types'
 import generateFormSubmissionTags from './generateFormSubmissionTags.js'
@@ -135,6 +136,45 @@ export default class OneBlinkUploader {
         previousFormSubmissionApprovalId,
         recaptchas,
         formSubmissionDraftId,
+      },
+    })
+  }
+
+  /**
+   * Upload an edited form submission.
+   *
+   * @param data The edited submission upload data and context
+   * @returns The upload result
+   */
+  async uploadFormSubmissionEdit({
+    submission,
+    definition,
+    device,
+    completionTimestamp,
+    submissionId,
+    context,
+    editedS3ObjectVersionId,
+    onProgress,
+    abortSignal,
+  }: UploadFormSubmissionEditOptions) {
+    const newS3SubmissionData: SubmissionTypes.NewS3SubmissionData = {
+      submission,
+      definition,
+      device,
+      completionTimestamp,
+    }
+    return await uploadToS3<{
+      formSubmissionEditId: string
+    }>({
+      ...this,
+      contentType: 'application/json',
+      body: JSON.stringify(newS3SubmissionData),
+      key: `form-submission-meta/${submissionId}/edit`,
+      abortSignal,
+      onProgress,
+      requestBodyHeader: {
+        editedS3ObjectVersionId,
+        context,
       },
     })
   }
