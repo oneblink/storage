@@ -6,10 +6,17 @@ import { RequestChecksumCalculation } from '@aws-sdk/middleware-flexible-checksu
 
 export class OneBlinkFetchHandler implements IOneBlinkHttpHandler {
   requestChecksumCalculation = RequestChecksumCalculation.WHEN_REQUIRED
+  disableCache: boolean
+
+  constructor({ disableCache }: { disableCache?: boolean } = {}) {
+    this.disableCache = !!disableCache
+  }
 
   async handleRequest(request: HttpRequest, options?: HttpHandlerOptions) {
     const { FetchHttpHandler } = await import('@smithy/fetch-http-handler')
-    const fetchHttpHandler = new FetchHttpHandler()
+    const fetchHttpHandler = new FetchHttpHandler(
+      this.disableCache ? { cache: 'no-store' } : undefined,
+    )
     const { response } = await fetchHttpHandler.handle(request, options)
     return response
   }
