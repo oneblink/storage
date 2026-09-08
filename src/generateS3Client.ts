@@ -12,10 +12,12 @@ export function generateS3Client<T>({
   apiOrigin,
   getBearerToken,
   requestBodyHeader,
+  disableCache,
 }: StorageConstructorOptions & {
   requestBodyHeader?: RequestBodyHeader
+  disableCache?: boolean
 }) {
-  const oneBlinkHttpHandler = getOneBlinkHttpHandler()
+  const oneBlinkHttpHandler = getOneBlinkHttpHandler({ disableCache })
   const oneBlinkRequestHandler = new OneBlinkRequestHandler<T>(
     oneBlinkHttpHandler,
     requestBodyHeader,

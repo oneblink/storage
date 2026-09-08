@@ -45,6 +45,7 @@ describe('OneBlinkDownloader', () => {
       key: 'forms/123/submissions/submission-id',
       abortSignal: undefined,
       versionId: undefined,
+      disableCache: true,
     })
   })
 
@@ -82,6 +83,7 @@ describe('OneBlinkDownloader', () => {
       key: 'forms/123/submissions/submission-id',
       abortSignal: undefined,
       versionId: 'edited-version-id',
+      disableCache: false,
     })
   })
 })

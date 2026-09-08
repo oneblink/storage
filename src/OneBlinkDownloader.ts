@@ -69,6 +69,10 @@ export default class OneBlinkDownloader {
         key: `forms/${formId}/submissions/${submissionId}`,
         abortSignal,
         versionId,
+        // A version is immutable, however the latest submission object is
+        // overwritten by edits. Objects are stored with a long max-age, so
+        // without this the browser keeps serving the pre-edit submission.
+        disableCache: !versionId,
       },
     )
   }

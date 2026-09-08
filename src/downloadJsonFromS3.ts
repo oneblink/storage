@@ -12,15 +12,22 @@ export async function downloadJsonFromS3WithMetadata<T>({
   key,
   abortSignal,
   versionId,
+  disableCache,
   ...storageConstructorOptions
 }: DownloadOptions &
   StorageConstructorOptions & {
     key: string
     versionId?: string
+    /**
+     * Set to `true` for objects that can be overwritten in place, to prevent
+     * the browser serving a stale version from its cache.
+     */
+    disableCache?: boolean
   }): Promise<DownloadedJson<T> | undefined> {
   const { s3Client, bucket, oneBlinkRequestHandler } = generateS3Client({
     ...storageConstructorOptions,
     requestBodyHeader: undefined,
+    disableCache,
   })
 
   try {
@@ -32,6 +39,7 @@ export async function downloadJsonFromS3WithMetadata<T>({
               Bucket: bucket,
               Key: key,
               VersionId: versionId,
+              ResponseCacheControl: disableCache ? 'no-store' : undefined,
             }),
             {
               abortSignal,
