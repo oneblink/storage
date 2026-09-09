@@ -13,6 +13,7 @@ export async function downloadJsonFromS3WithMetadata<T>({
   abortSignal,
   versionId,
   disableCache,
+  requestQuery,
   ...storageConstructorOptions
 }: DownloadOptions &
   StorageConstructorOptions & {
@@ -23,11 +24,14 @@ export async function downloadJsonFromS3WithMetadata<T>({
      * the browser serving a stale version from its cache.
      */
     disableCache?: boolean
+    /** Query parameters to add to the request sent to lambda at edge */
+    requestQuery?: Record<string, string>
   }): Promise<DownloadedJson<T> | undefined> {
   const { s3Client, bucket, oneBlinkRequestHandler } = generateS3Client({
     ...storageConstructorOptions,
     requestBodyHeader: undefined,
     disableCache,
+    requestQuery,
   })
 
   try {

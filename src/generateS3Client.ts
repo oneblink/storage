@@ -13,14 +13,18 @@ export function generateS3Client<T>({
   getBearerToken,
   requestBodyHeader,
   disableCache,
+  requestQuery,
 }: StorageConstructorOptions & {
   requestBodyHeader?: RequestBodyHeader
   disableCache?: boolean
+  /** Query parameters to add to the request sent to lambda at edge */
+  requestQuery?: Record<string, string>
 }) {
   const oneBlinkHttpHandler = getOneBlinkHttpHandler({ disableCache })
   const oneBlinkRequestHandler = new OneBlinkRequestHandler<T>(
     oneBlinkHttpHandler,
     requestBodyHeader,
+    requestQuery,
   )
 
   // The endpoint we use instead of the the AWS S3 endpoint is
