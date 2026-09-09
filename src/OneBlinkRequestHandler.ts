@@ -13,10 +13,12 @@ import OneBlinkStorageError from './OneBlinkStorageError.js'
  * dynamic data from the lambda at edge to be retrieved and held for later when
  * the upload has completed.
  */
-export class OneBlinkRequestHandler<T>
-  implements RequestHandler<HttpRequest, HttpResponse>
-{
+export class OneBlinkRequestHandler<T> implements RequestHandler<
+  HttpRequest,
+  HttpResponse
+> {
   requestBodyHeader?: RequestBodyHeader
+  requestQuery?: Record<string, string>
   oneBlinkHttpHandler: IOneBlinkHttpHandler
   oneblinkResponse?: OneBlinkResponse<T>
   failResponse?: FailResponse
@@ -24,9 +26,11 @@ export class OneBlinkRequestHandler<T>
   constructor(
     oneBlinkHttpHandler: IOneBlinkHttpHandler,
     requestBodyHeader?: RequestBodyHeader,
+    requestQuery?: Record<string, string>,
   ) {
     this.oneBlinkHttpHandler = oneBlinkHttpHandler
     this.requestBodyHeader = requestBodyHeader
+    this.requestQuery = requestQuery
   }
 
   async handle(request: HttpRequest) {
@@ -34,6 +38,10 @@ export class OneBlinkRequestHandler<T>
       request.headers['x-oneblink-request-body'] = JSON.stringify(
         this.requestBodyHeader,
       )
+    }
+
+    if (this.requestQuery) {
+      Object.assign(request.query, this.requestQuery)
     }
 
     if (this.oneblinkResponse) {

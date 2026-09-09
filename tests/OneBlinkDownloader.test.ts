@@ -45,6 +45,7 @@ describe('OneBlinkDownloader', () => {
       key: 'forms/123/submissions/submission-id',
       abortSignal: undefined,
       versionId: undefined,
+      requestQuery: undefined,
       disableCache: true,
     })
   })
@@ -83,7 +84,33 @@ describe('OneBlinkDownloader', () => {
       key: 'forms/123/submissions/submission-id',
       abortSignal: undefined,
       versionId: 'edited-version-id',
+      requestQuery: undefined,
       disableCache: false,
+    })
+  })
+
+  it('requests the originally submitted version', async () => {
+    const downloader = new OneBlinkDownloader({
+      apiOrigin: 'https://example.com',
+      region: 'ap-southeast-2',
+      getBearerToken: async () => 'token',
+    })
+
+    await downloader.downloadSubmission({
+      formId: 123,
+      submissionId: 'submission-id',
+      asSubmitted: true,
+    })
+
+    expect(downloadJsonFromS3WithMetadata).toHaveBeenCalledWith({
+      apiOrigin: 'https://example.com',
+      region: 'ap-southeast-2',
+      getBearerToken: downloader.getBearerToken,
+      key: 'forms/123/submissions/submission-id',
+      abortSignal: undefined,
+      versionId: undefined,
+      requestQuery: { asSubmitted: 'true' },
+      disableCache: true,
     })
   })
 })

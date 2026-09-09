@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - `OneBlinkUploader.uploadFormSubmissionEdit()` to upload an edited form submission
 - optional `versionId` on `OneBlinkDownloader.downloadSubmission()` to GetObject a specific submission version
+- optional `asSubmitted` on `OneBlinkDownloader.downloadSubmission()` to download the originally submitted version
 
 ### Changed
 

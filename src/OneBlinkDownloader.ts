@@ -52,6 +52,7 @@ export default class OneBlinkDownloader {
     formId,
     abortSignal,
     versionId,
+    asSubmitted,
   }: DownloadOptions & {
     /** The identifier of the submission. */
     submissionId: string
@@ -62,6 +63,11 @@ export default class OneBlinkDownloader {
      * submission object.
      */
     versionId?: string
+    /**
+     * When true, download the version originally submitted. Ignored when
+     * `versionId` is provided.
+     */
+    asSubmitted?: boolean
   }) {
     return await downloadJsonFromS3WithMetadata<SubmissionTypes.S3SubmissionData>(
       {
@@ -69,6 +75,8 @@ export default class OneBlinkDownloader {
         key: `forms/${formId}/submissions/${submissionId}`,
         abortSignal,
         versionId,
+        requestQuery:
+          asSubmitted && !versionId ? { asSubmitted: 'true' } : undefined,
         // A version is immutable, however the latest submission object is
         // overwritten by edits. Objects are stored with a long max-age, so
         // without this the browser keeps serving the pre-edit submission.
